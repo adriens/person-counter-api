@@ -32,27 +32,28 @@
       <dependency>
         <groupId>ai.djl</groupId>
         <artifactId>repository</artifactId>
-        <version>0.4.0</version>
-      </dependency>
-
-      <dependency>
-        <groupId>ai.djl.mxnet</groupId>
-        <artifactId>mxnet-engine</artifactId>
-        <version>0.4.0</version>
-        <scope>runtime</scope>
+        <version>0.4.1</version>
       </dependency>
 
       <dependency>
         <groupId>ai.djl.mxnet</groupId>
         <artifactId>mxnet-model-zoo</artifactId>
         <version>0.4.0</version>
-      </dependency>
+    </dependency>
+    
 
-      <dependency>
+     <dependency>
+        <groupId>ai.djl.mxnet</groupId>
+        <artifactId>mxnet-engine</artifactId>
+        <version>0.4.0</version>
+    </dependency>
+    
+    <dependency>
         <groupId>ai.djl.mxnet</groupId>
         <artifactId>mxnet-native-auto</artifactId>
         <version>1.6.0</version>
-      </dependency>
+        <scope>runtime</scope>
+    </dependency>
 
   </dependencies>
 </project>
