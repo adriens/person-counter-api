@@ -1,1 +1,2 @@
-/home/gbertherat/person-counter-api/src/test/java/com/adriens/AppTest.java
+/home/gbertherat/person-counter-api/src/test/java/com/adriens/personcounterapi/PersonCounterTest.java
+/home/gbertherat/person-counter-api/src/test/java/com/adriens/personcounterapi/PersonCounterApiApplicationTests.java

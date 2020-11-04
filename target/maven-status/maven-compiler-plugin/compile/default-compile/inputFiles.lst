@@ -1,1 +1,3 @@
-/home/gbertherat/person-counter-api/src/main/java/com/adriens/PersonCounter.java
+/home/gbertherat/person-counter-api/src/main/java/com/adriens/personcounterapi/PersonCounterService.java
+/home/gbertherat/person-counter-api/src/main/java/com/adriens/personcounterapi/PersonCounterApiApplication.java
+/home/gbertherat/person-counter-api/src/main/java/com/adriens/personcounterapi/PersonCounterController.java
