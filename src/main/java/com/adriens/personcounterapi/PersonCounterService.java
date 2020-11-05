@@ -27,7 +27,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -38,12 +37,9 @@ import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
