@@ -37,14 +37,15 @@ import ai.djl.translate.TranslatorContext;
 import ai.djl.util.JsonUtils;
 
 public class Setup {
-    String modelName = "faster_rcnn/inception_resnet_v2_640x640/1";
-    String modelUrl =
-                "https://storage.googleapis.com/tfhub-modules/tensorflow/" + modelName + ".tar.gz";
+    private String engineName = "Tensorflow";    
+    private String modelType = "faster_rcnn";
+    private String modelName = "resnet101_v1_640x640/1";
+    private String modelUrl =
+                "https://storage.googleapis.com/tfhub-modules/tensorflow/" + modelType + "/" + modelName + ".tar.gz";
     //private ClassLoader classLoader = getClass().getClassLoader();
     //private File ref = new File(classLoader.getResource("models/faster_rcnn_inception_resnet_v2_640x640_1.tar.gz").getFile());
     //private String modelUrl = ref.getAbsolutePath();
     private Criteria<Image, DetectedObjects> criteria;
-
     private ZooModel<Image, DetectedObjects> model;
     private Predictor<Image, DetectedObjects> predictor;
 
@@ -55,6 +56,7 @@ public class Setup {
                     .optModelUrls(modelUrl)
                     // saved_model.pb file is in the subfolder of the model archive file
                     .optModelName(modelName)
+                    .optFilter("inception", "resnet50")
                     .optTranslator(new MyTranslator())
                     .optProgress(new ProgressBar())
                     .build();
@@ -68,6 +70,22 @@ public class Setup {
             e.printStackTrace();
         }
         this.predictor = model.newPredictor();
+    }
+
+    public String getEngineName(){
+        return engineName;
+    }
+
+    public String getModelType(){
+        return modelType;
+    }
+
+    public String getModelName(){
+        return modelName;
+    }
+
+    public String getModelUrl(){
+        return modelUrl;
     }
 
     public Criteria<Image, DetectedObjects> getCriteria(){

@@ -40,9 +40,10 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/commons/commons-csv/1.8/commons-csv-1.8.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/model-zoo/0.9.0-SNAPSHOT/model-zoo-0.9.0-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/tensorflow/tensorflow-model-zoo/0.8.0/tensorflow-model-zoo-0.8.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/tensorflow/tensorflow-engine/0.8.0/tensorflow-engine-0.8.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/tensorflow/tensorflow-api/0.9.0-SNAPSHOT/tensorflow-api-0.9.0-SNAPSHOT.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/tensorflow/tensorflow-api/0.8.0/tensorflow-api-0.8.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/bytedeco/javacpp/1.5.4/javacpp-1.5.4.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/google/protobuf/protobuf-java/3.8.0/protobuf-java-3.8.0.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/tensorflow/tensorflow-engine/0.8.0/tensorflow-engine-0.8.0.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/ai/djl/tensorflow/tensorflow-native-auto/2.3.1/tensorflow-native-auto-2.3.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/beust/jcommander/1.27/jcommander-1.27.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/tika/tika-core/1.24.1/tika-core-1.24.1.jar" enabled="true" runInBatchMode="false"/>
@@ -137,7 +138,6 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/edu/ucar/grib/4.5.5/grib-4.5.5.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/itadaki/bzip2/0.9.1/bzip2-0.9.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/jsoup/jsoup/1.13.1/jsoup-1.13.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/google/protobuf/protobuf-java/3.11.4/protobuf-java-3.11.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/edu/ucar/cdm/4.5.5/cdm-4.5.5.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/edu/ucar/udunits/4.5.5/udunits-4.5.5.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/joda-time/joda-time/2.2/joda-time-2.2.jar" enabled="true" runInBatchMode="false"/>

@@ -85,6 +85,24 @@ public class PersonCounterController implements ErrorController {
         return metadatas;
     }
 
+    @GetMapping("/photos/{file}/analysis")
+    public HashMap<String, String> analysis(@PathVariable String file)
+            throws IOException, ModelException, TranslateException {
+        HashMap<String, String> analysis = null;
+        try{
+            analysis = service.getAnalysis(file, APIsetup);
+        } catch(IIOException e){
+            log.info("Can't find image '" + file + "', is it in folder 'input'? ");
+            throw new ImageNotFoundException(e.getMessage());
+        }
+        return analysis;
+    }
+
+    @GetMapping("/photos/list")
+    public HashMap<String, String> list(){
+        return service.listFiles();
+    }
+
     @GetMapping("/error")
     public String handleError(HttpServletRequest request) {
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");

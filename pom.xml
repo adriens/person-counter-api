@@ -85,11 +85,13 @@
         <artifactId>log4j-slf4j-impl</artifactId>
         <version>2.12.1</version>
     </dependency>
+
     <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>2.8.5</version>
     </dependency>
+
     <dependency>
         <groupId>ai.djl</groupId>
         <artifactId>api</artifactId>
@@ -108,6 +110,12 @@
       <artifactId>tensorflow-model-zoo</artifactId>
       <version>0.8.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>ai.djl.tensorflow</groupId>
+      <artifactId>tensorflow-api</artifactId>
+      <version>0.8.0</version>
+  </dependency>
   
 
     <dependency>
@@ -149,7 +157,6 @@
       <version>1.24.1</version>
       <type>pom</type>
     </dependency>
-  
   </dependencies>
 
   <build>

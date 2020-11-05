@@ -25,7 +25,9 @@ import ai.djl.util.JsonUtils;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -36,9 +38,12 @@ import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -101,7 +106,6 @@ public final class PersonCounterService {
     }
 
     public void saveBoundingBoxImage(String file, Setup setup) throws IOException, ModelException, TranslateException {
-
         DetectedObjects detection = new PersonCounterService().detect(file, setup);
         Path outputDir = Paths.get("src/main/resources/images");
         Files.createDirectories(outputDir);
@@ -137,6 +141,41 @@ public final class PersonCounterService {
             metadatas.put(name, metadata.get(name));
         }
         return metadatas;
+    }
+
+    public HashMap<String, String> getAnalysis(String file, Setup setup)
+            throws IOException, ModelException, TranslateException {
+        HashMap<String, String> analysis = new HashMap<>();
+
+        analysis.put("engineName", setup.getEngineName());
+        analysis.put("modelType", setup.getModelType());
+        analysis.put("modelName", setup.getModelName());
+        analysis.put("modelURL", setup.getModelUrl());
+
+        long startTime = System.nanoTime();
+        new PersonCounterService().detect(file, setup);
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+        analysis.put("detectionTimeMs", String.valueOf(duration));
+        
+        startTime = System.nanoTime();
+        new PersonCounterService().saveBoundingBoxImage(file, setup);
+        endTime = System.nanoTime();
+        duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+        analysis.put("visualizationTimeMs", String.valueOf(duration));
+
+        return analysis;
+    }
+
+    public HashMap<String, String> listFiles(){
+        File folder = new File("input/");
+        File[] listOfFiles = folder.listFiles();
+
+        HashMap<String, String> files = new HashMap<>();
+        for(int i = 0; i < listOfFiles.length; i++){
+            files.put(String.valueOf(i), listOfFiles[i].getName());
+        }
+        return files;
     }
 
     static Map<Integer, String> loadSynset() throws IOException {
