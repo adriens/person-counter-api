@@ -130,6 +130,26 @@
         <version>6.8.1</version>
         <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-core</artifactId>
+      <version>1.24.1</version>
+    </dependency>  
+
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parsers</artifactId>
+      <version>1.24.1</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika</artifactId>
+      <version>1.24.1</version>
+      <type>pom</type>
+    </dependency>
+  
   </dependencies>
 
   <build>
