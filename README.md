@@ -44,7 +44,7 @@ docker ps
 ```
 git clone https://github.com/adriens/person-counter-api
 cd person-counter-api
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 
