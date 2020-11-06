@@ -36,7 +36,7 @@ L'identifiant c'est "67tSocD.jpeg"
 ```
 docker pull gbertherat/person-counter-api:latest
 docker images
-docker run -d -p 8080:8080 gbertherat/person-counter-api:latest
+docker run -d -p 8080:8080 --name=person-counter-api gbertherat/person-counter-api:latest 
 docker ps
 ```
 
