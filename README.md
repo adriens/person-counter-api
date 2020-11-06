@@ -24,7 +24,7 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 ```
 
 ### :clipboard: Note
-Pour ajouter une image, récupérer l'identifiant d'une image de <imgur.com>.<br>
+Pour ajouter une image, récupérer l'identifiant d'une image de [imgur.com](https://imgur.com/).<br>
 Exemple:<br>
 <https://imgur.com/67tSocD> --> Copier l'adresse de l'image --> https://i.imgur.com/67tSocD.jpeg<br>
 L'identifiant c'est "67tSocD.jpeg"
