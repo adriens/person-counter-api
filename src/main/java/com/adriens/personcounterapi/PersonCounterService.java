@@ -23,12 +23,16 @@ import ai.djl.modality.cv.output.DetectedObjects.DetectedObject;
 import ai.djl.translate.TranslateException;
 import ai.djl.util.JsonUtils;
 
+import com.adriens.personcounterapi.exception.UnknownImageUrlException;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -40,6 +44,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -122,18 +128,18 @@ public final class PersonCounterService {
     public HashMap<String, String> getMetaDatas(String file) throws IOException, SAXException, TikaException {
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
-        Metadata metadata = new Metadata();   //empty metadata object 
+        Metadata metadata = new Metadata(); // empty metadata object
         FileInputStream inputstream = new FileInputStream("input/" + file);
         ParseContext context = new ParseContext();
         parser.parse(inputstream, handler, metadata, context);
 
         System.out.println(handler.toString());
 
-      //getting the list of all meta data elements 
+        // getting the list of all meta data elements
         String[] metadataNames = metadata.names();
         HashMap<String, String> metadatas = new HashMap<>();
 
-        for(String name : metadataNames) {		        
+        for (String name : metadataNames) {
             metadatas.put(name, metadata.get(name));
         }
         return metadatas;
@@ -151,25 +157,77 @@ public final class PersonCounterService {
         long startTime = System.nanoTime();
         new PersonCounterService().detect(file, setup);
         long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+        long duration = (endTime - startTime) / 1000000; // divide by 1000000 to get milliseconds.
         analysis.put("detectionTimeMs", String.valueOf(duration));
-        
+
         startTime = System.nanoTime();
         new PersonCounterService().saveBoundingBoxImage(file, setup);
         endTime = System.nanoTime();
-        duration = (endTime - startTime) / 1000000;  //divide by 1000000 to get milliseconds.
+        duration = (endTime - startTime) / 1000000; // divide by 1000000 to get milliseconds.
         analysis.put("visualizationTimeMs", String.valueOf(duration));
 
         return analysis;
     }
 
-    public HashMap<String, String> listFiles(){
+    public void addImg(String imageUrl) throws IOException {
+        Path outputDir = Paths.get("input");
+        Files.createDirectories(outputDir);
+
+        URL url = new URL("https://i.imgur.com/" + imageUrl);
+        String fileName = url.getFile();
+        String destName = "input/" + fileName.substring(fileName.lastIndexOf("/"));
+
+        String mimetype = new MimetypesFileTypeMap().getContentType(destName);
+        String type = mimetype.split("/")[0];
+        if(!type.equals("image")){
+            logger.info(fileName + " is not an image.");
+            return;
+        }
+
+        InputStream is = null;
+        try{
+            is = url.openStream();
+        } catch(FileNotFoundException e){
+            throw new UnknownImageUrlException(e.getMessage());
+        }
+        OutputStream os = new FileOutputStream(destName);
+
+        byte[] b = new byte[2048];
+        int length;
+
+        while((length = is.read(b)) != -1){
+            os.write(b, 0, length);
+        }
+
+        is.close();
+        os.close();
+        logger.info("Successfully added image " + fileName);
+    }
+
+    public void rmImg(String img){
+        File file = new File("input/" + img);
+        if(file.exists() && file.isFile()){
+            file.delete();
+            logger.info("Successfully removed image " + img);
+            return;
+        }
+        logger.info("Couldn't remove image" + img);
+    }
+
+    public HashMap<String, String> listFiles() throws IOException {
+        Path outputDir = Paths.get("input");
+        Files.createDirectories(outputDir);
+
         File folder = new File("input/");
         File[] listOfFiles = folder.listFiles();
 
         HashMap<String, String> files = new HashMap<>();
         for(int i = 0; i < listOfFiles.length; i++){
             files.put(String.valueOf(i), listOfFiles[i].getName());
+        }
+
+        if(files.size() == 0){
+            files.put("notice", "No images found");
         }
         return files;
     }

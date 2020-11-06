@@ -98,8 +98,18 @@ public class PersonCounterController implements ErrorController {
         return analysis;
     }
 
+    @GetMapping("/photos/{file}/add")
+    public void addImg(@PathVariable String file) throws IOException {
+        service.addImg(file);
+    }
+
+    @GetMapping("/photos/{file}/remove")
+    public void rmImg(@PathVariable String file) throws IOException {
+        service.rmImg(file);
+    }
+
     @GetMapping("/photos/list")
-    public HashMap<String, String> list(){
+    public HashMap<String, String> list() throws IOException {
         return service.listFiles();
     }
 
