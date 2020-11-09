@@ -21,7 +21,7 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 /photos/{img}/visualize   # Permet de lancer l'affichage des objets détectées sur une image
 /photos/{img}/metadata    # Permet de récupérer les méta-données d'une image
 /photos/{img}/analysis    # Permet de récupérer les données lié à l'exécution de l'application
-/photos/{img}/detect/full # Combines /detect and /metadata
+/photos/{img}/detect/full # Combine les résultats de /detect et /metadata
 ```
 
 ### :clipboard: Note
