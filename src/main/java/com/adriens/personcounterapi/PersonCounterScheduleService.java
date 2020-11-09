@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * Allows the creation of scheduled functions
+ */
 @Component
 public class PersonCounterScheduleService {
     private static final Logger log = LoggerFactory.getLogger(PersonCounterScheduleService.class);
@@ -20,6 +23,10 @@ public class PersonCounterScheduleService {
         this.daysLimit = daysLimit;
     }
 
+    /**
+     * Function to automatically detect and pictures older than n days 
+     * (Editable in application.properties)
+     */
     @Scheduled(cron = "0 0 9 * * *") // Everyday at 9 o-clock (0 0 9 * * *)
     public void deleteOldPhotos(){
         log.info("Deleting old photos..");

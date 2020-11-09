@@ -81,6 +81,15 @@ public final class PersonCounterService {
     private PersonCounterService() {
     }
 
+    /**
+     * Runs the object detection on a picture
+     * @param file the file to run the detection on
+     * @param setup general setup
+     * @return a DetectedObjects object
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
     public DetectedObjects detect(String file, Setup setup) throws IOException, ModelException, TranslateException {
         if (!"TensorFlow".equals(Engine.getInstance().getEngineName())) {
             return null;
@@ -94,6 +103,11 @@ public final class PersonCounterService {
         return detection;
     }
 
+    /**
+     * Allows the conversion from DetectedObjects objects to json
+     * @param detection the DetectedObjects object
+     * @return a list of Detection objects which will be read as a json
+     */
     public ArrayList<Detection> detectedObjectsToJson(DetectedObjects detection) {
         ArrayList<Detection> list = new ArrayList<>();
 
@@ -107,6 +121,14 @@ public final class PersonCounterService {
         return list;
     }
 
+    /**
+     * Saves an image with boxes surrounding the detected objects
+     * @param file the picture to process
+     * @param setup general setup
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
     public void saveBoundingBoxImage(String file, Setup setup) throws IOException, ModelException, TranslateException {
         DetectedObjects detection = new PersonCounterService().detect(file, setup);
         Path outputDir = Paths.get("src/main/resources/images");
@@ -125,6 +147,14 @@ public final class PersonCounterService {
         logger.info("Detected objects image has been saved in: {}", imagePath);
     }
 
+    /**
+     * Retrieves the metadatas of a picture
+     * @param file the picture to process
+     * @return a list of metadatas
+     * @throws IOException
+     * @throws SAXException
+     * @throws TikaException
+     */
     public HashMap<String, String> getMetaDatas(String file) throws IOException, SAXException, TikaException {
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
@@ -132,8 +162,6 @@ public final class PersonCounterService {
         FileInputStream inputstream = new FileInputStream("input/" + file);
         ParseContext context = new ParseContext();
         parser.parse(inputstream, handler, metadata, context);
-
-        System.out.println(handler.toString());
 
         // getting the list of all meta data elements
         String[] metadataNames = metadata.names();
@@ -145,6 +173,15 @@ public final class PersonCounterService {
         return metadatas;
     }
 
+    /**
+     * Returns the list of execution-related informations
+     * @param file the picture to process
+     * @param setup general setup
+     * @return a list of execution-related informations
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
     public HashMap<String, String> getAnalysis(String file, Setup setup)
             throws IOException, ModelException, TranslateException {
         HashMap<String, String> analysis = new HashMap<>();
@@ -169,6 +206,47 @@ public final class PersonCounterService {
         return analysis;
     }
 
+    /**
+     * Returns a list of detection objects AND metadatas
+     * @param file the picture to process
+     * @param setup general setup
+     * @return 
+     * @throws IOException
+     * @throws TranslateException
+     * @throws SAXException
+     * @throws TikaException
+     */
+    public HashMap<String, Object> getFullDetect(String file, Setup setup)
+            throws IOException, TranslateException, SAXException, TikaException {
+        
+        HashMap<String, Object> map = new HashMap<>();
+
+        Image img = ImageFactory.getInstance().fromInputStream(new FileInputStream("input/" + file));
+        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img)));
+
+        Parser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        Metadata metadata = new Metadata(); // empty metadata object
+        ParseContext context = new ParseContext();
+        parser.parse(new FileInputStream("input/" + file), handler, metadata, context);
+
+        // getting the list of all meta data elements
+        String[] metadataNames = metadata.names();
+        HashMap<String, String> metadatas = new HashMap<>();
+
+        for (String name : metadataNames) {
+            metadatas.put(name, metadata.get(name));
+        }
+        map.put("metadata", metadatas);
+
+        return map;
+    }
+
+    /**
+     * Downloads and adds an image to the input folder
+     * @param imageUrl image filename on imgur.com
+     * @throws IOException
+     */
     public void addImg(String imageUrl) throws IOException {
         Path outputDir = Paths.get("input");
         Files.createDirectories(outputDir);
@@ -204,6 +282,9 @@ public final class PersonCounterService {
         logger.info("Successfully added image " + fileName);
     }
 
+    /**
+     * Removes an picture from the input folder
+     */
     public void rmImg(String img){
         File file = new File("input/" + img);
         if(file.exists() && file.isFile()){
@@ -213,7 +294,12 @@ public final class PersonCounterService {
         }
         logger.info("Couldn't remove image" + img);
     }
-
+    
+    /**
+     * Lists all pictures from the input folder
+     * @return a list of file names
+     * @throws IOException
+     */
     public HashMap<String, String> listFiles() throws IOException {
         Path outputDir = Paths.get("input");
         Files.createDirectories(outputDir);

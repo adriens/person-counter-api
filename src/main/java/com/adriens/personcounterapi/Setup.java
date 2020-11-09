@@ -136,8 +136,8 @@ public class Setup {
         private float threshold;
 
         MyTranslator() {
-            maxBoxes = 10;
-            threshold = 0.7f;
+            maxBoxes = 50;
+            threshold = 0.5f;
         }
 
         @Override
