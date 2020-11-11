@@ -14,6 +14,7 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 
 ## :mailbox: Endpoints
 ```
+/                         # Accès à la documentation
 /photos/list              # Permet de récupérer la liste des images disponible
 /photos/{img}/add         # Permet d'ajouter une image à la liste des images disponibles, voir section Note ci-dessous
 /photos/{img}/remove      # Permet de supprimer une image de la liste
