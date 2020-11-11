@@ -131,7 +131,7 @@ public final class PersonCounterService {
      */
     public void saveBoundingBoxImage(String file, Setup setup) throws IOException, ModelException, TranslateException {
         DetectedObjects detection = new PersonCounterService().detect(file, setup);
-        Path outputDir = Paths.get("src/main/resources/images");
+        Path outputDir = Paths.get("output/");
         Files.createDirectories(outputDir);
 
         Path imageFile = Paths.get("input/" + file);

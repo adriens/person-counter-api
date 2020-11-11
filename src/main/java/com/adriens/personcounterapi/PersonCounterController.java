@@ -1,7 +1,10 @@
 package com.adriens.personcounterapi;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.adriens.personcounterapi.exception.ImageNotFoundException;
 
-import org.apache.http.HttpResponse;
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,14 +111,14 @@ public class PersonCounterController implements ErrorController {
             log.info("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
         }
-        ClassPathResource imgfile = new ClassPathResource("images/output.png");
+        FileInputStream fis = new FileInputStream(new File("output/output.png"));
         try {
             TimeUnit.SECONDS.sleep(1);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }
         response.setContentType(MediaType.IMAGE_PNG_VALUE);
-        StreamUtils.copy(imgfile.getInputStream(), response.getOutputStream());
+        StreamUtils.copy(fis, response.getOutputStream());
     }
 
     /**
