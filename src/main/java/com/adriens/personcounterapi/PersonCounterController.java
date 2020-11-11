@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.adriens.personcounterapi.exception.ImageNotFoundException;
 
+import org.apache.http.HttpResponse;
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,10 @@ public class PersonCounterController implements ErrorController {
     private Setup APIsetup = new Setup();
     private final Logger log = LoggerFactory.getLogger(PersonCounterController.class);
 
+    @GetMapping("/")
+    public void showDoc(HttpServletResponse httpResponse) throws IOException {
+        httpResponse.sendRedirect("/swagger-ui.html");
+    }
     
     /**
      * Prints a list of informations about the detected objects on a picture
