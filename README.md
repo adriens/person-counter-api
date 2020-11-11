@@ -35,10 +35,13 @@ L'identifiant c'est "67tSocD.jpeg"
 ```
 
 ## :gear: Démarrer l'image Docker
+**Important**: Vous devez définir un répertoire qui sera le point de montage entre votre machine et l'image Docker et qui contiendra les images d'entrées de l'API.<br>
+Pour se faire, utilisez l'option `-v` lors du `docker run`<br>
+Exemple: ``docker run -v ~/Images:/input gbertherat/person-counter-api:latest`` partagera votre répertoire "Images" avec l'image Docker.
 ```
 docker pull gbertherat/person-counter-api:latest
 docker images
-docker run -d -p 8080:8080 --name=person-counter-api gbertherat/person-counter-api:latest 
+docker run -v [Chemin/Vers/Votre/Dossier]:/input -d -p 8080:8080 --name=person-counter-api gbertherat/person-counter-api:latest 
 docker ps
 ```
 
