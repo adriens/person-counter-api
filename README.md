@@ -35,16 +35,7 @@ Endpoints pour les images hébergées par des sites tierces
 `{host}` : Récupérez le nom du site dans la liste ci-dessous.<br>
 
 Liste des sites tierces supportés pour les images externes:<br>
-[imgur](imgur.com/)
-
-### :clipboard: Note
-Pour ajouter une image, récupérer l'identifiant d'une image de [imgur.com](https://imgur.com/).<br>
-Exemple:<br>
-<https://imgur.com/67tSocD> --> Copier l'adresse de l'image --> https://i.imgur.com/67tSocD.jpeg<br>
-L'identifiant c'est "67tSocD.jpeg"
-```
-/photos/67tSocD.jpeg/add  # Télécharge et ajoute l'image https://i.imgur.com/67tSocD.jpeg à la liste
-```
+[imgur](https://imgur.com/)
 
 ## :gear: Démarrer l'image Docker
 **Important**: Vous devez définir un répertoire qui sera le point de montage entre votre machine et l'image Docker et qui contiendra les images d'entrées de l'API.<br>
