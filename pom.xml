@@ -6,7 +6,7 @@
 
   <groupId>com.adriens</groupId>
   <artifactId>PersonCounterAPI</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <name>Person Counter API</name>
 
   <parent>
