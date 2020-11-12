@@ -77,7 +77,7 @@ import org.xml.sax.SAXException;
 public final class PersonCounterService {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonCounterService.class);
-
+    
     private PersonCounterService() {
     }
 
@@ -91,10 +91,6 @@ public final class PersonCounterService {
      * @throws TranslateException
      */
     public DetectedObjects detect(String file, Setup setup) throws IOException, ModelException, TranslateException {
-        if (!"TensorFlow".equals(Engine.getInstance().getEngineName())) {
-            return null;
-        }
-
         Path imageFile = Paths.get("input/" + file);
         Image img = ImageFactory.getInstance().fromFile(imageFile);
         logger.info("[" + LocalTime.now() + "] Begining prediction..");

@@ -35,3 +35,5 @@ build/
 ### JAR ###
 target/PersonCounterAPI-1.0-SNAPSHOT.jar
 target/PersonCounterAPI-1.0-SNAPSHOT.jar.original
+input/
+output/
