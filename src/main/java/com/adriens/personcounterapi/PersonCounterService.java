@@ -13,7 +13,6 @@
 package com.adriens.personcounterapi;
 
 import ai.djl.ModelException;
-import ai.djl.engine.Engine;
 import ai.djl.modality.Classifications.Classification;
 import ai.djl.modality.cv.Image;
 import ai.djl.modality.cv.ImageFactory;
@@ -23,16 +22,12 @@ import ai.djl.modality.cv.output.DetectedObjects.DetectedObject;
 import ai.djl.translate.TranslateException;
 import ai.djl.util.JsonUtils;
 
-import com.adriens.personcounterapi.exception.UnknownImageUrlException;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -44,8 +39,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -236,59 +229,6 @@ public final class PersonCounterService {
         map.put("metadata", metadatas);
 
         return map;
-    }
-
-    /**
-     * Downloads and adds an image to the input folder
-     * @param imageUrl image filename on imgur.com
-     * @throws IOException
-     */
-    public void addImg(String imageUrl) throws IOException {
-        Path outputDir = Paths.get("input");
-        Files.createDirectories(outputDir);
-
-        URL url = new URL("https://i.imgur.com/" + imageUrl);
-        String fileName = url.getFile();
-        String destName = "input/" + fileName.substring(fileName.lastIndexOf("/"));
-
-        String mimetype = new MimetypesFileTypeMap().getContentType(destName);
-        String type = mimetype.split("/")[0];
-        if(!type.equals("image")){
-            logger.info(fileName + " is not an image.");
-            return;
-        }
-
-        InputStream is = null;
-        try{
-            is = url.openStream();
-        } catch(FileNotFoundException e){
-            throw new UnknownImageUrlException(e.getMessage());
-        }
-        OutputStream os = new FileOutputStream(destName);
-
-        byte[] b = new byte[2048];
-        int length;
-
-        while((length = is.read(b)) != -1){
-            os.write(b, 0, length);
-        }
-
-        is.close();
-        os.close();
-        logger.info("Successfully added image " + fileName);
-    }
-
-    /**
-     * Removes an picture from the input folder
-     */
-    public void rmImg(String img){
-        File file = new File("input/" + img);
-        if(file.exists() && file.isFile()){
-            file.delete();
-            logger.info("Successfully removed image " + img);
-            return;
-        }
-        logger.info("Couldn't remove image" + img);
     }
     
     /**

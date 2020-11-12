@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -160,26 +158,6 @@ public class PersonCounterController implements ErrorController {
             throw new ImageNotFoundException(e.getMessage());
         }
         return analysis;
-    }
-
-    /**
-     * Adds an image to the list of available-for-analysis pictures
-     * @param file URI input for the file's name
-     * @throws IOException
-     */
-    @GetMapping("/photos/{file}/add")
-    public void addImg(@PathVariable String file) throws IOException {
-        service.addImg(file);
-    }
-
-    /**
-     * Removes an image from the list of available-for-analysis pictures
-     * @param file URI input for the file's name
-     * @throws IOException
-     */
-    @GetMapping("/photos/{file}/remove")
-    public void rmImg(@PathVariable String file) throws IOException {
-        service.rmImg(file);
     }
 
     /**

@@ -16,8 +16,6 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 ```
 /                         # Accès à la documentation
 /photos/list              # Permet de récupérer la liste des images disponible
-/photos/{img}/add         # Permet d'ajouter une image à la liste des images disponibles, voir section Note ci-dessous
-/photos/{img}/remove      # Permet de supprimer une image de la liste
 /photos/{img}/detect      # Permet de récupérer les informations sur les objets détectés
 /photos/{img}/visualize   # Permet de lancer l'affichage des objets détectées sur une image
 /photos/{img}/metadata    # Permet de récupérer les méta-données d'une image
