@@ -23,15 +23,6 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 /photos/{img}/detect/full # Combine les résultats de /detect et /metadata
 ```
 
-### :clipboard: Note
-Pour ajouter une image, récupérer l'identifiant d'une image de [imgur.com](https://imgur.com/).<br>
-Exemple:<br>
-<https://imgur.com/67tSocD> --> Copier l'adresse de l'image --> https://i.imgur.com/67tSocD.jpeg<br>
-L'identifiant c'est "67tSocD.jpeg"
-```
-/photos/67tSocD.jpeg/add  # Télécharge et ajoute l'image https://i.imgur.com/67tSocD.jpeg à la liste
-```
-
 ## :gear: Démarrer l'image Docker
 **Important**: Vous devez définir un répertoire qui sera le point de montage entre votre machine et l'image Docker et qui contiendra les images d'entrées de l'API.<br>
 Pour se faire, utilisez l'option `-v` lors du `docker run`<br>
