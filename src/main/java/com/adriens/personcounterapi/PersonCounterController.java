@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.adriens.personcounterapi.exception.ImageNotFoundException;
+import com.adriens.personcounterapi.exception.UnknownImageUrlException;
 
 import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
@@ -39,6 +40,11 @@ public class PersonCounterController implements ErrorController {
     private Setup APIsetup = new Setup();
     private final Logger log = LoggerFactory.getLogger(PersonCounterController.class);
 
+    /**
+     * Shows the API documention page
+     * @param httpResponse Server response
+     * @throws IOException
+     */
     @GetMapping("/")
     public void showDoc(HttpServletResponse httpResponse) throws IOException {
         httpResponse.sendRedirect("/swagger-ui.html");
@@ -62,6 +68,31 @@ public class PersonCounterController implements ErrorController {
         } catch (IIOException e) {
             log.info("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
+        }
+        ArrayList<Detection> json = service.detectedObjectsToJson(objects);
+
+        return json;
+    }
+
+    /**
+     * Prints a list of informations about the detected objects on an web-hosted picture
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @return a list of Detection object, which will be read as a json
+     * @throws ModelException
+     * @throws TranslateException
+     * @throws IOException
+     */
+    @GetMapping("/photos/thirdparty/{host}/{file}/detect")
+    public ArrayList<Detection> thirdPartyDetect(@PathVariable String host, @PathVariable String file)
+            throws ModelException, TranslateException, IOException {
+
+        DetectedObjects objects = null;
+        try{
+        objects = service.thirdPartyDetect(file, host, APIsetup);
+        } catch(IOException e){
+            log.info("Can't find file " + file + " on " + host);
+            throw new UnknownImageUrlException(e.getMessage());
         }
         ArrayList<Detection> json = service.detectedObjectsToJson(objects);
 
@@ -93,6 +124,31 @@ public class PersonCounterController implements ErrorController {
     }
 
     /**
+     * Prints a list of informations about the detected objects AND the metadatas of a third party picture
+     * @param host URI input for the host name
+     * @param file URI input for the file name
+     * @return a list of Detection object and metadatas which will be read as a json
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     * @throws SAXException
+     * @throws TikaException
+     */
+    @GetMapping("/photos/thirdparty/{host}/{file}/detect/full")
+    public HashMap<String, Object> thirdPartyDetectFull(@PathVariable String host, @PathVariable String file)
+            throws IOException, ModelException, TranslateException, SAXException, TikaException {
+
+        HashMap<String, Object> map = new HashMap<>();
+        try{
+            map = service.thirdPartyFullDetect(host, file, APIsetup);
+        } catch(IOException e){
+            log.info("Can't find file " + file + " on " + host);
+            throw new UnknownImageUrlException(e.getMessage());
+        }
+        return map;
+    }
+
+    /**
      * Shows an image with boxes surrounding detected objects on a picture
      * @param response Server response type for error handling
      * @param file URI input for the file's name
@@ -104,7 +160,7 @@ public class PersonCounterController implements ErrorController {
     public void visualize(HttpServletResponse response, @PathVariable String file)
             throws IOException, ModelException, TranslateException {
         try {
-            service.saveBoundingBoxImage(file, APIsetup);
+            service.visualize(file, APIsetup);
         } catch (IIOException e) {
             log.info("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
@@ -120,6 +176,35 @@ public class PersonCounterController implements ErrorController {
     }
 
     /**
+     * Shows an image with boxes surrounding detected objects on a third party picture
+     * @param response Server response type for error handling
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
+    @GetMapping("/photos/thirdparty/{host}/{file}/visualize")
+    public void thirdPartyVisualize(HttpServletResponse response, @PathVariable String host, @PathVariable String file)
+            throws IOException, ModelException, TranslateException {
+        try{
+            service.thirdPartyVisualize(host, file, APIsetup);
+        } catch(IOException e){
+            log.info("Can't find file " + file + " on " + host);
+            throw new UnknownImageUrlException(e.getMessage());
+        }
+        FileInputStream fis = new FileInputStream(new File("output/output.png"));
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+        }
+        response.setContentType(MediaType.IMAGE_PNG_VALUE);
+        StreamUtils.copy(fis, response.getOutputStream());
+        fis.close();
+    }
+
+    /**
      * Prints a list of a picture's metadatas
      * @param file URI input for the file's name
      * @return a list of metadatas which will be read as a json
@@ -131,7 +216,7 @@ public class PersonCounterController implements ErrorController {
     public HashMap<String, String> metadata(@PathVariable String file) throws IOException, SAXException, TikaException {
         HashMap<String, String> metadatas = null;
         try{
-            metadatas = service.getMetaDatas(file);
+            metadatas = service.getMetadatas(file);
         } catch(FileNotFoundException e){
             log.info("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
@@ -140,9 +225,30 @@ public class PersonCounterController implements ErrorController {
     }
 
     /**
+     * Prints a list of a third party picture's metadatas
+     * @param host URI input for the host name
+     * @param file URI input for the file name
+     * @return a list of metadatas which will be read as a json
+     * @throws IOException
+     * @throws SAXException
+     * @throws TikaException
+     */
+    @GetMapping("/photos/thirdparty/{host}/{file}/metadata")
+    public HashMap<String, String> metadata(@PathVariable String host, @PathVariable String file) throws IOException, SAXException, TikaException {
+        HashMap<String, String> metadatas = null;
+        try{
+            metadatas = service.thirdPartyMetadatas(host, file);
+        } catch(IOException e){
+            log.info("Can't find file " + file + " on " + host);
+            throw new UnknownImageUrlException(e.getMessage());
+        }
+        return metadatas;
+    }
+
+    /**
      * Prints a list of informations about the image analysis process
      * @param file URI input for the file's name
-     * @return
+     * @return a list of informations which will be read as a json
      * @throws IOException
      * @throws ModelException
      * @throws TranslateException
@@ -156,6 +262,28 @@ public class PersonCounterController implements ErrorController {
         } catch(IIOException e){
             log.info("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
+        }
+        return analysis;
+    }
+
+    /**
+     * Prints a list of information about the third party image analysis process
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @return a list of informations which will be read as a json
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
+    @GetMapping("/photos/thirdparty/{host}/{file}/analysis")
+    public HashMap<String, String> analysis(@PathVariable String host, @PathVariable String file)
+            throws IOException, ModelException, TranslateException {
+        HashMap<String, String> analysis = null;
+        try{
+            analysis = service.thirdPartyAnalysis(host, file, APIsetup);
+        } catch(IOException e){
+            log.info("Can't find file " + file + " on " + host);
+            throw new UnknownImageUrlException(e.getMessage());
         }
         return analysis;
     }

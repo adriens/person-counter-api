@@ -23,6 +23,20 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 /photos/{img}/detect/full # Combine les résultats de /detect et /metadata
 ```
 
+Endpoints pour les images hébergées par des sites tierces
+```
+/photos/thirdparty/{host}/{file}/detect         # Permet de récupérer les informations sur les objets détectés sur une image externe
+/photos/thirdparty/{host}/{file}/visualize      # Permet de lancer l'affichage des objets détectées sur une image externe
+/photos/thirdparty/{host}/{file}/metadata       # Permet de récupérer les méta-données d'une image externe
+/photos/thirdparty/{host}/{file}/analysis       # Permet de récupérer les données lié à l'exécution de l'application sur une image externe
+/photos/thirdparty/{host}/{file}/detect/full    # Combine les résultats de /detect et /metadata pour une image externe
+```
+`{file}` : Récuperez l'identifiant de l'image en copiant l'adresse de celle-ci.<br>
+`{host}` : Récupérez le nom du site dans la liste ci-dessous.<br>
+
+Liste des sites tierces supportés pour les images externes:<br>
+[imgur](imgur.com/)
+
 ### :clipboard: Note
 Pour ajouter une image, récupérer l'identifiant d'une image de [imgur.com](https://imgur.com/).<br>
 Exemple:<br>

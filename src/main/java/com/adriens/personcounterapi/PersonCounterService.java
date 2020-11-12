@@ -22,10 +22,12 @@ import ai.djl.modality.cv.output.DetectedObjects.DetectedObject;
 import ai.djl.translate.TranslateException;
 import ai.djl.util.JsonUtils;
 
+import com.adriens.personcounterapi.exception.UnsupportedHostException;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -35,7 +37,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,13 +74,30 @@ import org.xml.sax.SAXException;
 public final class PersonCounterService {
 
     private static final Logger logger = LoggerFactory.getLogger(PersonCounterService.class);
-    
+    private static final List<String> imageHosts = Arrays.asList("imgur");
+
     private PersonCounterService() {
     }
 
     /**
-     * Runs the object detection on a picture
-     * @param file the file to run the detection on
+     * Runs prediction on an image
+     * 
+     * @param img   Image to run prediction on
+     * @param setup general setup
+     * @return a DetectedObjects object
+     * @throws TranslateException
+     */
+    public DetectedObjects launchPrediction(Image img, Setup setup) throws TranslateException {
+        logger.info("[" + LocalTime.now() + "] Begining prediction..");
+        DetectedObjects detection = setup.getPredictor().predict(img);
+        logger.info("[" + LocalTime.now() + "] Prediction done!");
+        return detection;
+    }
+
+    /**
+     * Runs object detection on a picture
+     * 
+     * @param file  URI input for file name
      * @param setup general setup
      * @return a DetectedObjects object
      * @throws IOException
@@ -86,14 +107,30 @@ public final class PersonCounterService {
     public DetectedObjects detect(String file, Setup setup) throws IOException, ModelException, TranslateException {
         Path imageFile = Paths.get("input/" + file);
         Image img = ImageFactory.getInstance().fromFile(imageFile);
-        logger.info("[" + LocalTime.now() + "] Begining prediction..");
-        DetectedObjects detection = setup.getPredictor().predict(img);
-        logger.info("[" + LocalTime.now() + "] Prediction done!");
-        return detection;
+        return launchPrediction(img, setup);
+    }
+
+    /**
+     * Runs object detection on a third party picture
+     * 
+     * @param file  URI input for file name
+     * @param host  URI input for host name
+     * @param setup general setup
+     * @return a DetectedObjects object
+     * @throws TranslateException
+     * @throws IOException
+     */
+    public DetectedObjects thirdPartyDetect(String file, String host, Setup setup)
+            throws TranslateException, IOException {
+        InputStream is = thirdPartyImage(host, file);
+        Image img = ImageFactory.getInstance().fromInputStream(is);
+        is.close();
+        return launchPrediction(img, setup);
     }
 
     /**
      * Allows the conversion from DetectedObjects objects to json
+     * 
      * @param detection the DetectedObjects object
      * @return a list of Detection objects which will be read as a json
      */
@@ -111,20 +148,51 @@ public final class PersonCounterService {
     }
 
     /**
-     * Saves an image with boxes surrounding the detected objects
-     * @param file the picture to process
+     * Allows image visualization
+     * 
+     * @param file URI input for file name
      * @param setup general setup
      * @throws IOException
      * @throws ModelException
      * @throws TranslateException
      */
-    public void saveBoundingBoxImage(String file, Setup setup) throws IOException, ModelException, TranslateException {
-        DetectedObjects detection = new PersonCounterService().detect(file, setup);
-        Path outputDir = Paths.get("output/");
-        Files.createDirectories(outputDir);
-
+    public void visualize(String file, Setup setup) throws IOException, ModelException, TranslateException {
         Path imageFile = Paths.get("input/" + file);
         Image img = ImageFactory.getInstance().fromFile(imageFile);
+        saveImage(img, setup);
+    }
+
+    /**
+     * Allows third party image visualization
+     * 
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @param setup general input
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
+    public void thirdPartyVisualize(String host, String file, Setup setup)
+            throws IOException, ModelException, TranslateException {
+        InputStream is = thirdPartyImage(host, file);
+        Image img = ImageFactory.getInstance().fromInputStream(is);
+        is.close();
+        saveImage(img, setup);
+    }
+
+    /**
+     * Saves an image with boxes surrounding the detected objects
+     * 
+     * @param img the picture to process
+     * @param setup general setup
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
+    public void saveImage(Image img, Setup setup) throws IOException, TranslateException {
+        DetectedObjects detection = launchPrediction(img, setup);
+        Path outputDir = Paths.get("output/");
+        Files.createDirectories(outputDir);
 
         // Make image copy with alpha channel because original image was jpg
         Image newImage = img.duplicate(Image.Type.TYPE_INT_ARGB);
@@ -133,22 +201,23 @@ public final class PersonCounterService {
         Path imagePath = outputDir.resolve("output.png");
         // OpenJDK can't save jpg with alpha channel
         newImage.save(Files.newOutputStream(imagePath), "png");
-        logger.info("Detected objects image has been saved in: {}", imagePath);
+        logger.info("Image with detected objects has been saved in: {}", imagePath);
     }
 
     /**
      * Retrieves the metadatas of a picture
-     * @param file the picture to process
+     * 
+     * @param img picture to retrieve the metadatas from
      * @return a list of metadatas
      * @throws IOException
      * @throws SAXException
      * @throws TikaException
      */
-    public HashMap<String, String> getMetaDatas(String file) throws IOException, SAXException, TikaException {
+    public HashMap<String, String> metadatas(InputStream img) throws IOException, SAXException, TikaException {
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
         Metadata metadata = new Metadata(); // empty metadata object
-        FileInputStream inputstream = new FileInputStream("input/" + file);
+        InputStream inputstream = img;
         ParseContext context = new ParseContext();
         parser.parse(inputstream, handler, metadata, context);
 
@@ -163,15 +232,43 @@ public final class PersonCounterService {
     }
 
     /**
-     * Returns the list of execution-related informations
+     * Retrieves the metadatas of a picture
+     * 
      * @param file the picture to process
+     * @return a list of metadatas
+     * @throws IOException
+     * @throws SAXException
+     * @throws TikaException
+     */
+    public HashMap<String, String> getMetadatas(String file) throws IOException, SAXException, TikaException {
+        return metadatas(new FileInputStream(new File("input/" + file)));
+    }
+
+    /**
+     * Retrieves the metadatas of a third party picture
+     * 
+     * @param host URI input for host name
+     * @param file URI inputfor file name
+     * @return a list of metadatas
+     * @throws IOException
+     * @throws SAXException
+     * @throws TikaException
+     */
+    public HashMap<String, String> thirdPartyMetadatas(String host, String file)
+            throws IOException, SAXException, TikaException {
+        return metadatas(thirdPartyImage(host, file));
+    }
+
+    /**
+     * Returns the list of execution-related informations
+     * @param img the picture to process
      * @param setup general setup
      * @return a list of execution-related informations
      * @throws IOException
      * @throws ModelException
      * @throws TranslateException
      */
-    public HashMap<String, String> getAnalysis(String file, Setup setup)
+    public HashMap<String, String> analysis(Image img, Setup setup)
             throws IOException, ModelException, TranslateException {
         HashMap<String, String> analysis = new HashMap<>();
 
@@ -181,13 +278,13 @@ public final class PersonCounterService {
         analysis.put("modelURL", setup.getModelUrl());
 
         long startTime = System.nanoTime();
-        new PersonCounterService().detect(file, setup);
+        launchPrediction(img, setup);
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000; // divide by 1000000 to get milliseconds.
         analysis.put("detectionTimeMs", String.valueOf(duration));
 
         startTime = System.nanoTime();
-        new PersonCounterService().saveBoundingBoxImage(file, setup);
+        saveImage(img, setup);
         endTime = System.nanoTime();
         duration = (endTime - startTime) / 1000000; // divide by 1000000 to get milliseconds.
         analysis.put("visualizationTimeMs", String.valueOf(duration));
@@ -196,10 +293,39 @@ public final class PersonCounterService {
     }
 
     /**
-     * Returns a list of detection objects AND metadatas
-     * @param file the picture to process
+     * Returns the list of execution-related informations
+     * @param file URI input for file name
      * @param setup general setup
-     * @return 
+     * @return a list of execution-related informations
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
+    public HashMap<String, String> getAnalysis(String file, Setup setup)
+            throws IOException, ModelException, TranslateException {
+        return analysis(ImageFactory.getInstance().fromFile(Paths.get("input/" + file)), setup);
+    }
+
+    /**
+     * Returns the list of execution-related informations for a third party picture
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @param setup general setup
+     * @return a list of execution-related informations for a third party picture
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
+    public HashMap<String, String> thirdPartyAnalysis(String host, String file, Setup setup)
+            throws IOException, ModelException, TranslateException {
+        return analysis(ImageFactory.getInstance().fromInputStream(thirdPartyImage(host, file)), setup);
+    }
+
+    /**
+     * Returns a list of detection objects AND metadatas
+     * @param file  the picture to process
+     * @param setup general setup
+     * @return a list of detection objects AND metadatas
      * @throws IOException
      * @throws TranslateException
      * @throws SAXException
@@ -207,7 +333,7 @@ public final class PersonCounterService {
      */
     public HashMap<String, Object> getFullDetect(String file, Setup setup)
             throws IOException, TranslateException, SAXException, TikaException {
-        
+
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(new FileInputStream("input/" + file));
@@ -230,7 +356,44 @@ public final class PersonCounterService {
 
         return map;
     }
-    
+
+    /**
+     * Returns a list of detection objects AND metadatas
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @param setup general setup 
+     * @return a list of detection objects AND metadatas
+     * @throws FileNotFoundException
+     * @throws IOException
+     * @throws SAXException
+     * @throws TikaException
+     * @throws TranslateException
+     */
+    public HashMap<String, Object> thirdPartyFullDetect(String host, String file, Setup setup)
+            throws FileNotFoundException, IOException, SAXException, TikaException, TranslateException {
+        HashMap<String, Object> map = new HashMap<>();
+
+        Image img = ImageFactory.getInstance().fromInputStream(thirdPartyImage(host, file));
+        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img)));
+
+        Parser parser = new AutoDetectParser();
+        BodyContentHandler handler = new BodyContentHandler();
+        Metadata metadata = new Metadata(); // empty metadata object
+        ParseContext context = new ParseContext();
+        parser.parse(thirdPartyImage(host, file), handler, metadata, context);
+
+        // getting the list of all meta data elements
+        String[] metadataNames = metadata.names();
+        HashMap<String, String> metadatas = new HashMap<>();
+
+        for (String name : metadataNames) {
+            metadatas.put(name, metadata.get(name));
+        }
+        map.put("metadata", metadatas);
+
+        return map;
+    }
+
     /**
      * Lists all pictures from the input folder
      * @return a list of file names
@@ -244,14 +407,40 @@ public final class PersonCounterService {
         File[] listOfFiles = folder.listFiles();
 
         HashMap<String, String> files = new HashMap<>();
-        for(int i = 0; i < listOfFiles.length; i++){
+        for (int i = 0; i < listOfFiles.length; i++) {
             files.put(String.valueOf(i), listOfFiles[i].getName());
         }
 
-        if(files.size() == 0){
+        if (files.size() == 0) {
             files.put("notice", "No images found");
         }
         return files;
+    }
+
+    /**
+     * Returns the InputStream of a third party image
+     * @param host URI input for host name
+     * @param file URI input for file name
+     * @return an InputStream object
+     * @throws IOException
+     */
+    public InputStream thirdPartyImage(String host, String file) throws IOException {
+        if(imageHosts.indexOf(host) == -1){
+            logger.info("Image host '" + host + "' isn't supported. Supported hosts are: " + imageHosts.toString());
+            throw new UnsupportedHostException();
+        }
+        
+        URL url = null;
+        switch(host){
+            case "imgur":
+            default:
+                url = new URL("https://i.imgur.com/" + file);
+                break;    
+        }
+
+        InputStream is = null;
+        is = url.openStream();
+        return is;
     }
 
     static Map<Integer, String> loadSynset() throws IOException {
