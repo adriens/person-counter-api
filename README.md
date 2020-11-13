@@ -37,6 +37,15 @@ Endpoints pour les images hébergées par des sites tierces
 Liste des sites tierces supportés pour les images externes:<br>
 [imgur](https://imgur.com/)
 
+Paramètres optionnels pour les endpoints
+```
+?class=[className]      # Permet de filtrer les résultats sur une classe d'objets
+?confidence=[50-100]    # Permet de fitlrer les résultats sur un taux de probabilité minimum
+```
+
+Exemple:<br>
+`/photos/{img}/detect?class=person&confidence=90` retourne les personnes détectées avec un taux de probabilité de 90% minimum.
+
 ## :gear: Démarrer l'image Docker
 **Important**: Vous devez définir un répertoire qui sera le point de montage entre votre machine et l'image Docker et qui contiendra les images d'entrées de l'API.<br>
 Pour se faire, utilisez l'option `-v` lors du `docker run`<br>

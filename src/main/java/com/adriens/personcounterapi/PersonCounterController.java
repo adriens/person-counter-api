@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
@@ -59,17 +60,17 @@ public class PersonCounterController implements ErrorController {
      * @throws TranslateException
      */
     @GetMapping("/photos/{file}/detect")
-    public ArrayList<Detection> detect(@PathVariable String file)
+    public ArrayList<Detection> detect(@PathVariable String file, @RequestParam(name = "class", required = false) String label, @RequestParam(name = "confidence", required = false) String confidence)
             throws IOException, ModelException, TranslateException {
 
         DetectedObjects objects = null;
         try {
             objects = service.detect(file, APIsetup);
         } catch (IIOException e) {
-            log.info("Can't find image '" + file + "', is it in folder 'input'? ");
+            log.error("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
         }
-        ArrayList<Detection> json = service.detectedObjectsToJson(objects);
+        ArrayList<Detection> json = service.detectedObjectsToJson(objects, label, confidence);
 
         return json;
     }
@@ -84,17 +85,17 @@ public class PersonCounterController implements ErrorController {
      * @throws IOException
      */
     @GetMapping("/photos/thirdparty/{host}/{file}/detect")
-    public ArrayList<Detection> thirdPartyDetect(@PathVariable String host, @PathVariable String file)
+    public ArrayList<Detection> thirdPartyDetect(@PathVariable String host, @PathVariable String file, @RequestParam(name = "class", required = false) String label, @RequestParam(name = "confidence", required = false) String confidence)
             throws ModelException, TranslateException, IOException {
 
         DetectedObjects objects = null;
         try{
         objects = service.thirdPartyDetect(file, host, APIsetup);
         } catch(IOException e){
-            log.info("Can't find file " + file + " on " + host);
+            log.error("Can't find file " + file + " on " + host);
             throw new UnknownImageUrlException(e.getMessage());
         }
-        ArrayList<Detection> json = service.detectedObjectsToJson(objects);
+        ArrayList<Detection> json = service.detectedObjectsToJson(objects, label, confidence);
 
         return json;
     }
@@ -110,14 +111,14 @@ public class PersonCounterController implements ErrorController {
      * @throws TikaException
      */
     @GetMapping("/photos/{file}/detect/full")
-    public HashMap<String, Object> detectFull(@PathVariable String file)
+    public HashMap<String, Object> detectFull(@PathVariable String file, @RequestParam(name = "class", required = false) String label, @RequestParam(name = "confidence", required = false) String confidence)
             throws IOException, ModelException, TranslateException, SAXException, TikaException {
 
         HashMap<String, Object> map = new HashMap<>();
         try{
-            map = service.getFullDetect(file, APIsetup);
+            map = service.getFullDetect(file, label, confidence, APIsetup);
         } catch (IIOException e) {
-            log.info("Can't find image '" + file + "', is it in folder 'input'? ");
+            log.error("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
         }
         return map;
@@ -135,14 +136,14 @@ public class PersonCounterController implements ErrorController {
      * @throws TikaException
      */
     @GetMapping("/photos/thirdparty/{host}/{file}/detect/full")
-    public HashMap<String, Object> thirdPartyDetectFull(@PathVariable String host, @PathVariable String file)
+    public HashMap<String, Object> thirdPartyDetectFull(@PathVariable String host, @PathVariable String file, @RequestParam(name = "class", required = false) String label, @RequestParam(name = "confidence", required = false) String confidence)
             throws IOException, ModelException, TranslateException, SAXException, TikaException {
 
         HashMap<String, Object> map = new HashMap<>();
         try{
-            map = service.thirdPartyFullDetect(host, file, APIsetup);
+            map = service.thirdPartyFullDetect(host, file, label, confidence, APIsetup);
         } catch(IOException e){
-            log.info("Can't find file " + file + " on " + host);
+            log.error("Can't find file " + file + " on " + host);
             throw new UnknownImageUrlException(e.getMessage());
         }
         return map;
@@ -162,7 +163,7 @@ public class PersonCounterController implements ErrorController {
         try {
             service.visualize(file, APIsetup);
         } catch (IIOException e) {
-            log.info("Can't find image '" + file + "', is it in folder 'input'? ");
+            log.error("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
         }
         FileInputStream fis = new FileInputStream(new File("output/output.png"));
@@ -190,7 +191,7 @@ public class PersonCounterController implements ErrorController {
         try{
             service.thirdPartyVisualize(host, file, APIsetup);
         } catch(IOException e){
-            log.info("Can't find file " + file + " on " + host);
+            log.error("Can't find file " + file + " on " + host);
             throw new UnknownImageUrlException(e.getMessage());
         }
         FileInputStream fis = new FileInputStream(new File("output/output.png"));
@@ -218,7 +219,7 @@ public class PersonCounterController implements ErrorController {
         try{
             metadatas = service.getMetadatas(file);
         } catch(FileNotFoundException e){
-            log.info("Can't find image '" + file + "', is it in folder 'input'? ");
+            log.error("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
         };
         return metadatas;
@@ -239,7 +240,7 @@ public class PersonCounterController implements ErrorController {
         try{
             metadatas = service.thirdPartyMetadatas(host, file);
         } catch(IOException e){
-            log.info("Can't find file " + file + " on " + host);
+            log.error("Can't find file " + file + " on " + host);
             throw new UnknownImageUrlException(e.getMessage());
         }
         return metadatas;
@@ -260,7 +261,7 @@ public class PersonCounterController implements ErrorController {
         try{
             analysis = service.getAnalysis(file, APIsetup);
         } catch(IIOException e){
-            log.info("Can't find image '" + file + "', is it in folder 'input'? ");
+            log.error("Can't find image '" + file + "', is it in folder 'input'? ");
             throw new ImageNotFoundException(e.getMessage());
         }
         return analysis;
@@ -282,7 +283,7 @@ public class PersonCounterController implements ErrorController {
         try{
             analysis = service.thirdPartyAnalysis(host, file, APIsetup);
         } catch(IOException e){
-            log.info("Can't find file " + file + " on " + host);
+            log.error("Can't find file " + file + " on " + host);
             throw new UnknownImageUrlException(e.getMessage());
         }
         return analysis;

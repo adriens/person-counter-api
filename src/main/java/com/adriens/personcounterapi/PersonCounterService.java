@@ -130,19 +130,27 @@ public final class PersonCounterService {
 
     /**
      * Allows the conversion from DetectedObjects objects to json
-     * 
      * @param detection the DetectedObjects object
+     * @param label GET input for label filter
+     * @param confidence GET input for confidence filter
      * @return a list of Detection objects which will be read as a json
      */
-    public ArrayList<Detection> detectedObjectsToJson(DetectedObjects detection) {
+    public ArrayList<Detection> detectedObjectsToJson(DetectedObjects detection, String label, String confidence) {
         ArrayList<Detection> list = new ArrayList<>();
-
+        
         int i = 0;
-        for (Classification item : detection.items()) {
-            Rectangle bounds = ((DetectedObject) detection.item(i)).getBoundingBox().getBounds();
-            list.add(new Detection(i, item.getClassName(), item.getProbability(), bounds.getX(), bounds.getY(),
-                    bounds.getWidth(), bounds.getHeight()));
-            i++;
+        try{
+            for (Classification item : detection.items()) {
+                if((label == null || label.equals(item.getClassName())) && (confidence == null || item.getProbability() > Float.parseFloat(confidence)/100)){
+                    Rectangle bounds = ((DetectedObject) detection.item(i)).getBoundingBox().getBounds();
+                    list.add(new Detection(i, item.getClassName(), item.getProbability(), bounds.getX(), bounds.getY(),
+                            bounds.getWidth(), bounds.getHeight()));
+                            
+                    i++;
+                }
+            }
+        } catch(NumberFormatException e){
+            logger.error("Invalid input for confidence parameter");
         }
         return list;
     }
@@ -324,6 +332,8 @@ public final class PersonCounterService {
     /**
      * Returns a list of detection objects AND metadatas
      * @param file  the picture to process
+     * @param label GET input for label filter
+     * @param confidence GET input for confidence filter
      * @param setup general setup
      * @return a list of detection objects AND metadatas
      * @throws IOException
@@ -331,13 +341,13 @@ public final class PersonCounterService {
      * @throws SAXException
      * @throws TikaException
      */
-    public HashMap<String, Object> getFullDetect(String file, Setup setup)
+    public HashMap<String, Object> getFullDetect(String file, String label, String confidence, Setup setup)
             throws IOException, TranslateException, SAXException, TikaException {
 
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(new FileInputStream("input/" + file));
-        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img)));
+        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence));
 
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
@@ -361,6 +371,8 @@ public final class PersonCounterService {
      * Returns a list of detection objects AND metadatas
      * @param host URI input for host name
      * @param file URI input for file name
+     * @param label GET input for label filter
+     * @param confidence GET input for confidence filter
      * @param setup general setup 
      * @return a list of detection objects AND metadatas
      * @throws FileNotFoundException
@@ -369,12 +381,12 @@ public final class PersonCounterService {
      * @throws TikaException
      * @throws TranslateException
      */
-    public HashMap<String, Object> thirdPartyFullDetect(String host, String file, Setup setup)
+    public HashMap<String, Object> thirdPartyFullDetect(String host, String file, String label, String confidence, Setup setup)
             throws FileNotFoundException, IOException, SAXException, TikaException, TranslateException {
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(thirdPartyImage(host, file));
-        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img)));
+        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence));
 
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
@@ -426,7 +438,7 @@ public final class PersonCounterService {
      */
     public InputStream thirdPartyImage(String host, String file) throws IOException {
         if(imageHosts.indexOf(host) == -1){
-            logger.info("Image host '" + host + "' isn't supported. Supported hosts are: " + imageHosts.toString());
+            logger.error("Image host '" + host + "' isn't supported. Supported hosts are: " + imageHosts.toString());
             throw new UnsupportedHostException();
         }
         
