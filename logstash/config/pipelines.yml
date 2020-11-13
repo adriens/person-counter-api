@@ -1,0 +1,2 @@
+- pipeline.id: person-counter
+  path.config: "/usr/share/logstash/pipeline/logstash-person-counter.conf"
