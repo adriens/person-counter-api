@@ -23,7 +23,7 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gb
 /photos/{img}/detect/full # Combine les résultats de /detect et /metadata
 ```
 
-Endpoints pour les images hébergées par des sites tierces
+#### Endpoints pour les images hébergées par des sites tierces
 ```
 /photos/thirdparty/{host}/{file}/detect         # Permet de récupérer les informations sur les objets détectés sur une image externe
 /photos/thirdparty/{host}/{file}/visualize      # Permet de lancer l'affichage des objets détectées sur une image externe
@@ -37,7 +37,7 @@ Endpoints pour les images hébergées par des sites tierces
 Liste des sites tierces supportés pour les images externes:<br>
 [imgur](https://imgur.com/)
 
-Paramètres optionnels pour les endpoints
+#### Paramètres optionnels pour les endpoints
 ```
 ?class=[className]      # Permet de filtrer les résultats sur une classe d'objets
 ?confidence=[50-100]    # Permet de fitlrer les résultats sur un taux de probabilité minimum
