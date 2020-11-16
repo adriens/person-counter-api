@@ -1,19 +1,16 @@
-![Docker Pulls](https://img.shields.io/docker/pulls/rastadidi/person-counter-api)
-
-
-# API de dÃ©tection d'objets et de comptage de personnes :man:
+# API de détection d'objets et de comptage de personnes :man:
 
 API utilisant la librairie de Machine Learning DJL ainsi que TensorFlow afin de dÃ©tecter les objets sur une image.<br>
-Les objets dÃ©tectÃ©s peuvent ainsi Ãªtre comptÃ©.
+Les objets détectés peuvent ainsi être comptÃés.
   
-L'API renvoie les donnÃ©es sous format Json.
+L'API renvoie les données sous format Json.
 
 Lien vers [DJL](https://djl.ai/) <br>
 Lien vers [TensorFlow](https://www.tensorflow.org/)
 
 ## :whale: Docker
 
-L'api est disponible sur [Dockerhub](https://hub.docker.com/repository/docker/gbertherat/person-counter-api)
+L'api est disponible sur [Dockerhub](https://hub.docker.com/r/rastadidi/person-counter-api)
 
 ## :mailbox: Endpoints
 ```
