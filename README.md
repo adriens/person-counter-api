@@ -76,8 +76,8 @@ docker-compose -f elk.yml up -d
 <http://0.0.0.0:5601>
 
 ### Charger le dashboard
+Se rendre à l'adresse <http://0.0.0.0:5601/app/management/kibana/objects>
 ```
-http://0.0.0.0:5601/app/management/kibana/objects
 Importer le fichier "Dashboard.ndjson"
 Puis se rendre dans l'onglet Dashboard et cliquer sur Person Counter Dashboard
 ```
