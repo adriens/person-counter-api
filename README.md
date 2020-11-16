@@ -142,12 +142,12 @@ Sites tiers supportés pour les images externes:
 
 Exemple:
 
-- `/photos/{img}/detect?class=person&confidence=90` retourne les personnes dÃ©tectÃ©es avec un taux de probabilitÃ© de 90% minimum.
+- `/photos/{img}/detect?class=person&confidence=90` retourne les personnes détectées avec un taux de probabilité de 90% minimum.
 
 ## :gear: Démarrer l'API
 ### Par l'image Docker
-**Important**: Vous devez dÃ©finir un répertoire qui sera le point de montage entre votre machine et l'image Docker
-et qui contiendra les images d'entrÃ©es de l'API.
+**Important**: Vous devez définir un répertoire qui sera le point de montage entre votre machine et l'image Docker
+et qui contiendra les images d'entrées de l'API.
 
 Pour se faire, utilisez l'option `-v` lors du `docker run`
 
@@ -201,10 +201,9 @@ cd person-counter-api/demo
 ./camera-simulation.sh
 ```
 
-# jib build
+# Build JIB
 
-In your `~/.m2/settings.xml` put your Docker hub
-
+Dans votre `~/.m2/settings.xml`, placez vos identifiants DockerHub:
 ```xml
 <server>
     <id>registry.hub.docker.com</id>
@@ -212,8 +211,6 @@ In your `~/.m2/settings.xml` put your Docker hub
     <password>XXXXXXX</password>
 </server>
 ```
-
-Then build/push to DockerHub :
-
+Et build & push vers DockerHub
 `mvn compile jib:build`
->>>>>>> 611c76d3f8cc7e1281ab22e72e9305ab9d26bd6a
+
