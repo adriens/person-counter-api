@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -24,11 +25,14 @@ import org.springframework.http.MediaType;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.xml.sax.SAXException;
 
 import ai.djl.ModelException;
+
 import ai.djl.modality.cv.output.DetectedObjects;
 import ai.djl.translate.TranslateException;
 
@@ -169,6 +173,20 @@ public class PersonCounterController implements ErrorController {
         return map;
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/photos/raw")
+    public ArrayList<Detection> rawDetect(InputStream file,
+                                        @RequestParam(name = "class", required = false) String label, 
+                                        @RequestParam(name = "confidence", required = false) String confidence,
+                                        @RequestParam(name = "alias", required = false) String alias) throws IOException, ModelException,
+            TranslateException {
+        try{
+            return service.detectedObjectsToJson(service.rawDetect(file, APIsetup), label, confidence, alias);
+        } catch(IIOException e){
+            log.error("Couldn't find file " + file);
+            throw new ImageNotFoundException(e.getMessage());
+        }
+    }
+
     /**
      * Shows an image with boxes surrounding detected objects on a picture
      * @param response Server response type for error handling
@@ -206,7 +224,9 @@ public class PersonCounterController implements ErrorController {
      * @throws TranslateException
      */
     @GetMapping("/photos/thirdparty/{host}/{file}/visualize")
-    public void thirdPartyVisualize(HttpServletResponse response, @PathVariable String host, @PathVariable String file)
+    public void thirdPartyVisualize(HttpServletResponse response, 
+                                @PathVariable String host, 
+                                @PathVariable String file)
             throws IOException, ModelException, TranslateException {
         try{
             service.thirdPartyVisualize(host, file, APIsetup);
@@ -255,7 +275,8 @@ public class PersonCounterController implements ErrorController {
      * @throws TikaException
      */
     @GetMapping("/photos/thirdparty/{host}/{file}/metadata")
-    public HashMap<String, String> metadata(@PathVariable String host, @PathVariable String file) throws IOException, SAXException, TikaException {
+    public HashMap<String, String> metadata(@PathVariable String host, 
+                                            @PathVariable String file) throws IOException, SAXException, TikaException {
         HashMap<String, String> metadatas = null;
         try{
             metadatas = service.thirdPartyMetadatas(host, file);

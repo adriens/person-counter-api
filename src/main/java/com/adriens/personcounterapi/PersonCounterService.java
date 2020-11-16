@@ -128,6 +128,11 @@ public final class PersonCounterService {
         return launchPrediction(img, setup);
     }
 
+    public DetectedObjects rawDetect(InputStream file, Setup setup)
+            throws FileNotFoundException, TranslateException, IOException {
+        return launchPrediction(ImageFactory.getInstance().fromInputStream(file), setup);
+    }
+
     /**
      * Allows the conversion from DetectedObjects objects to json
      * @param detection the DetectedObjects object

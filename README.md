@@ -24,6 +24,13 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/r/rastadidi/person-c
 /photos/{img}/detect/full # Combine les résultats de /detect et /metadata
 ```
 
+#### Endpoint pour les requêtes RAW avec CURL ou HTTPIE
+```
+curl --data-binary @image "127.0.0.1:8080/photos/raw"
+http -v ':8080/photos/raw' < image.jpg 
+```
+*Note*: Les paramètres optionnels fonctionnent aussi pour ce endpoint.
+
 #### Endpoints pour les images hébergées par des sites tiers
 ```
 /photos/thirdparty/{host}/{file}/detect         # Permet de récupérer les informations sur les objets détectés sur une image externe
@@ -115,8 +122,8 @@ Dans votre `~/.m2/settings.xml`, placez vos identifiants DockerHub:
 ```xml
 <server>
     <id>registry.hub.docker.com</id>
-    <username>rastadidi</username>
-    <password>XXXXXXX</password>
+    <username>username</username>
+    <password>password</password>
 </server>
 ```
 Et build & push vers DockerHub
