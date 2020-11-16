@@ -91,7 +91,7 @@ public class PersonCounterController implements ErrorController {
      * @throws IOException
      */
     @GetMapping("/photos/thirdparty/{host}/{file}/detect")
-    public ArrayList<Detection> thirdPartyDetect(@PathVariable String host, 
+    public HashMap<String, Object> thirdPartyDetect(@PathVariable String host, 
                                                 @PathVariable String file, 
                                                 @RequestParam(name = "class", required = false) String label, 
                                                 @RequestParam(name = "confidence", required = false) String confidence,
@@ -105,7 +105,10 @@ public class PersonCounterController implements ErrorController {
             log.error("Can't find file " + file + " on " + host);
             throw new UnknownImageUrlException(e.getMessage());
         }
-        ArrayList<Detection> json = service.detectedObjectsToJson(objects, label, confidence, alias);
+        HashMap<String, Object> json = new HashMap<>();
+        ArrayList<Detection> detections = service.detectedObjectsToJson(objects, label, confidence, alias);
+        json.put("count", detections.size());
+        json.put("image", detections);
 
         return json;
     }

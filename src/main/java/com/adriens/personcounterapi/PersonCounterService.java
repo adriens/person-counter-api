@@ -347,7 +347,9 @@ public final class PersonCounterService {
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(new FileInputStream("input/" + file));
-        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence, alias));
+        ArrayList<Detection> objects = detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence, alias);
+        map.put("count", objects.size());
+        map.put("image", objects);
 
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
@@ -386,7 +388,10 @@ public final class PersonCounterService {
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(thirdPartyImage(host, file));
-        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence, alias));
+        
+        ArrayList<Detection> objects = detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence, alias);
+        map.put("count", objects.size());
+        map.put("image", objects);
 
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
