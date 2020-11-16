@@ -4,7 +4,9 @@ package com.adriens.personcounterapi;
  * Class for Detected Objects
  */
 public class Detection {
+    private int id;
     private String className;
+    private String alias;
     private double probability;
     private double x;
     private double y;
@@ -21,8 +23,10 @@ public class Detection {
      * @param width width of the object
      * @param height height of the object
      */
-    public Detection(int id, String className, double probability, double x, double y, double width, double height) {
+    public Detection(int id, String className, String alias, double probability, double x, double y, double width, double height) {
+        this.id = id;
         this.className = className;
+        this.alias = alias;
         this.probability = probability;
         this.x = x;
         this.y = y;
@@ -31,11 +35,23 @@ public class Detection {
     }
 
     /**
+     * Returns the detection's id
+     * @return the detection's id
+     */
+    public int getId(){
+        return id;
+    }
+
+    /**
      * Returns the detection's class name
      * @return the class name of the detection
      */
     public String getClassName(){
         return className;
+    }
+
+    public String getAlias(){
+        return alias;
     }
 
     /**

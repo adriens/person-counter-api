@@ -135,17 +135,17 @@ public final class PersonCounterService {
      * @param confidence GET input for confidence filter
      * @return a list of Detection objects which will be read as a json
      */
-    public ArrayList<Detection> detectedObjectsToJson(DetectedObjects detection, String label, String confidence) {
+    public ArrayList<Detection> detectedObjectsToJson(DetectedObjects detection, String label, String confidence, String alias) {
         ArrayList<Detection> list = new ArrayList<>();
         
-        int i = 0;
+        int i = 1;
         try{
             for (Classification item : detection.items()) {
-                if((label == null || label.equals(item.getClassName())) && (confidence == null || item.getProbability() > Float.parseFloat(confidence)/100)){
-                    Rectangle bounds = ((DetectedObject) detection.item(i)).getBoundingBox().getBounds();
-                    list.add(new Detection(i, item.getClassName(), item.getProbability(), bounds.getX(), bounds.getY(),
+                if((label == null || label.equals(item.getClassName())) 
+                && (confidence == null || item.getProbability() > Float.parseFloat(confidence)/100)){
+                    Rectangle bounds = ((DetectedObject) detection.item(i-1)).getBoundingBox().getBounds();
+                    list.add(new Detection(i, item.getClassName(), alias, item.getProbability(), bounds.getX(), bounds.getY(),
                             bounds.getWidth(), bounds.getHeight()));
-                            
                     i++;
                 }
             }
@@ -341,13 +341,13 @@ public final class PersonCounterService {
      * @throws SAXException
      * @throws TikaException
      */
-    public HashMap<String, Object> getFullDetect(String file, String label, String confidence, Setup setup)
+    public HashMap<String, Object> getFullDetect(String file, String label, String confidence, String alias, Setup setup)
             throws IOException, TranslateException, SAXException, TikaException {
 
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(new FileInputStream("input/" + file));
-        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence));
+        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence, alias));
 
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
@@ -381,12 +381,12 @@ public final class PersonCounterService {
      * @throws TikaException
      * @throws TranslateException
      */
-    public HashMap<String, Object> thirdPartyFullDetect(String host, String file, String label, String confidence, Setup setup)
+    public HashMap<String, Object> thirdPartyFullDetect(String host, String file, String label, String confidence, String alias, Setup setup)
             throws FileNotFoundException, IOException, SAXException, TikaException, TranslateException {
         HashMap<String, Object> map = new HashMap<>();
 
         Image img = ImageFactory.getInstance().fromInputStream(thirdPartyImage(host, file));
-        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence));
+        map.put("image", detectedObjectsToJson(setup.getPredictor().predict(img), label, confidence, alias));
 
         Parser parser = new AutoDetectParser();
         BodyContentHandler handler = new BodyContentHandler();
