@@ -52,7 +52,7 @@ Exemple:
 
 - `/photos/{img}/detect?class=person&confidence=90` retourne les personnes dÃ©tectÃ©es avec un taux de probabilitÃ© de 90% minimum.
 
-## :gear: DÃ©marrer l'API
+## :gear: Démarrer l'API
 ### Par l'image Docker
 **Important**: Vous devez dÃ©finir un répertoire qui sera le point de montage entre votre machine et l'image Docker
 et qui contiendra les images d'entrÃ©es de l'API.
