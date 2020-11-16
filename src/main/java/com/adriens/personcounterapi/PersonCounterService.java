@@ -128,6 +128,15 @@ public final class PersonCounterService {
         return launchPrediction(img, setup);
     }
 
+    /**
+     * Runs object detection on a raw binary file
+     * @param file The file to process
+     * @param setup general setup
+     * @return a DetectedObjects object
+     * @throws FileNotFoundException
+     * @throws TranslateException
+     * @throws IOException
+     */
     public DetectedObjects rawDetect(InputStream file, Setup setup)
             throws FileNotFoundException, TranslateException, IOException {
         return launchPrediction(ImageFactory.getInstance().fromInputStream(file), setup);

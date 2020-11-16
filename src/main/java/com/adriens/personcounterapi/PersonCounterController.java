@@ -173,6 +173,14 @@ public class PersonCounterController implements ErrorController {
         return map;
     }
 
+    /**
+     * Prints a list of informations about the detected objects
+     * @param file Name of the raw binary file
+     * @return a list of Detection object  which will be read as a json
+     * @throws IOException
+     * @throws ModelException
+     * @throws TranslateException
+     */
     @RequestMapping(method = RequestMethod.POST, value = "/photos/raw")
     public ArrayList<Detection> rawDetect(InputStream file,
                                         @RequestParam(name = "class", required = false) String label, 
@@ -181,8 +189,8 @@ public class PersonCounterController implements ErrorController {
             TranslateException {
         try{
             return service.detectedObjectsToJson(service.rawDetect(file, APIsetup), label, confidence, alias);
-        } catch(IIOException e){
-            log.error("Couldn't find file " + file);
+        } catch(IOException e){
+            log.error("Couldn't find file entered as input");
             throw new ImageNotFoundException(e.getMessage());
         }
     }
