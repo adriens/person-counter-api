@@ -41,6 +41,7 @@ Liste des sites tierces supportés pour les images externes:<br>
 ```
 ?class=[className]      # Permet de filtrer les résultats sur une classe d'objets
 ?confidence=[50-100]    # Permet de fitlrer les résultats sur un taux de probabilité minimum
+?alias=[alias]          # Ajoute un alias aux objets retournés
 ```
 
 Exemple:<br>
