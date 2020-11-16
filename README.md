@@ -46,7 +46,8 @@ Liste des sites tierces supportés pour les images externes:<br>
 Exemple:<br>
 `/photos/{img}/detect?class=person&confidence=90` retourne les personnes détectées avec un taux de probabilité de 90% minimum.
 
-## :gear: Démarrer l'image Docker
+## :gear: Démarrer l'API
+### Par l'image Docker
 **Important**: Vous devez définir un répertoire qui sera le point de montage entre votre machine et l'image Docker et qui contiendra les images d'entrées de l'API.<br>
 Pour se faire, utilisez l'option `-v` lors du `docker run`<br>
 Exemple: ``docker run -v ~/Images:/input gbertherat/person-counter-api:latest`` partagera votre répertoire "Images" avec l'image Docker.
@@ -57,11 +58,32 @@ docker run -v [Chemin/Vers/Votre/Dossier]:/input -d -p 8080:8080 --name=person-c
 docker ps
 ```
 
-## :gear: Démarrer le service
+### Localement
 ```
 git clone https://github.com/adriens/person-counter-api
 cd person-counter-api
 ./mvnw spring-boot:run
 ```
 
+## :gear: Démarrer le monitoring ELK
+```
+cd person-counter-api
+docker-compose -f elk.yml up -d
+```
 
+### Accéder au monitoring ELK
+<http://0.0.0.0:5601>
+
+### Charger le dashboard
+```
+http://0.0.0.0:5601/app/management/kibana/objects
+Importer le fichier "Dashboard.ndjson"
+Puis se rendre dans l'onglet Dashboard et cliquer sur Person Counter Dashboard
+```
+
+### :memo: Note
+Le script de simulation de caméra doit tourner en fond afin de rendre le monitoring dynamique
+```
+cd person-counter-api/demo
+./camera-simulation.sh
+```
