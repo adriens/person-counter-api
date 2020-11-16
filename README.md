@@ -26,7 +26,7 @@ L'api est disponible sur [Dockerhub](https://hub.docker.com/r/rastadidi/person-c
 
 #### Endpoint pour les requêtes RAW avec CURL ou HTTPIE
 ```
-curl --data-binary @image "127.0.0.1:8080/photos/raw"
+curl --data-binary @image.jpg "127.0.0.1:8080/photos/raw"
 http -v ':8080/photos/raw' < image.jpg 
 ```
 *Note*: Les paramètres optionnels fonctionnent aussi pour ce endpoint.
