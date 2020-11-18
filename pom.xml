@@ -193,7 +193,7 @@
                 <version>2.6.0</version>
                 <configuration>
                     <from>
-                        <image>openjdk:8u171-alpine</image>
+                        <image>openjdk:8</image>
                         <!--          <credHelper></credHelper> -->
                     </from>
                     <to>
