@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/adriens/person-counter-api.svg?branch=main)](https://travis-ci.org/adriens/person-counter-api)
-
 # API de détection d'objets et de comptage de personnes :man:
 
 API utilisant la librairie de Machine Learning DJL ainsi que TensorFlow afin de détecter les objets
@@ -46,8 +44,16 @@ http -v ':8080/photos/raw' < image.jpg
 - `{host}` : Récupérer le nom du site dans la liste ci-dessous
 
 Sites tiers supportés pour les images externes:
-
 - [imgur](https://imgur.com/)
+
+*Exemple*: <br>
+Trouver une image sur imgur: https://imgur.com/67tSocD <br>
+---> Clique droit sur l'image <br>
+---> Copier l'adresse de l'image <br>
+---> https://i.imgur.com/67tSocD.jpg <br>
+---> Copier l'identifiant 
+---> 67tSocD.jpg
+- `/photos/thirdparty/imgur/67tSocD.jpg/detect` lance la détection sur l'image 67tSocD.jpg disponible sur imgur
 
 #### Paramètres optionnels pour les endpoints
 
@@ -57,8 +63,7 @@ Sites tiers supportés pour les images externes:
 ?alias=[alias]          # Ajoute un alias aux objets retournés
 ```
 
-Exemple:
-
+*Exemple*:
 - `/photos/{img}/detect?class=person&confidence=90` retourne les personnes détectées avec un taux de probabilité de 90% minimum.
 
 ## :gear: Démarrer l'API
@@ -68,8 +73,7 @@ et qui contiendra les images d'entrées de l'API.
 
 Pour se faire, utilisez l'option `-v` lors du `docker run`
 
-Exemple:
-
+*Exemple*: <br>
 ``docker run -v ~/Images:/input rastadidi/person-counter-api:latest`` partagera votre répertoire "Images" avec l'image Docker.
 ```
 docker pull rastadidi/person-counter-api:latest
