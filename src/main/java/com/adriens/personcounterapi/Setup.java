@@ -39,7 +39,7 @@ import ai.djl.util.JsonUtils;
 public class Setup {
     private String engineName = "Tensorflow";    
     private String modelType = "faster_rcnn";
-    private String modelName = "resnet101_v1_640x640/1";
+    private String modelName = "resnet152_v1_640x640/1";
     private String modelUrl =
                 "https://storage.googleapis.com/tfhub-modules/tensorflow/" + modelType + "/" + modelName + ".tar.gz";
     //private ClassLoader classLoader = getClass().getClassLoader();

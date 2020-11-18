@@ -56,7 +56,7 @@ public class PersonCounterServiceTests {
 
         assertEquals(7, numberOfDetectedPersonsAbove80Percent,
                 "Wrong number of persons detected above 80% probability on the first image");
-        assertEquals(4, numberOfDetectedPersonsAbove90Percent,
+        assertEquals(6, numberOfDetectedPersonsAbove90Percent,
                 "Wrong number of persons detected above 90% probability on the first image");
         log.info("Tests on function detect were successfull");
     }

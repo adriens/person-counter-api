@@ -1,6 +1,4 @@
-#!/bin/sh
-
-WAITING_TIME=60
+#!/bin/bash
 
 while true;
 do
@@ -8,6 +6,9 @@ do
     do
         echo `date "+[%H:%M:%S] Copied $file"`
         `cp $file ../input/BUREAU_GLIA.jpg`
+
+        WAITING_TIME=$(( RANDOM % 60 + 40))
+        echo "Sleeping time: $WAITING_TIME seconds" 
         sleep $WAITING_TIME
     done
 done

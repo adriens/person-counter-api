@@ -179,14 +179,47 @@
       <version>1.24.1</version>
       <type>pom</type>
     </dependency>
+    
+    <dependency>
+          <groupId>org.bytedeco.javacpp-presets</groupId>
+          <artifactId>tensorflow</artifactId>
+          <version>1.12.0-1.4.4</version>
+      </dependency>      <dependency>
+          <groupId>org.bytedeco.javacpp-presets</groupId>
+          <artifactId>tensorflow-platform</artifactId>
+          <version>1.12.0-1.4.4</version>
+      </dependency>
+      
     </dependencies>
 
   <build>
+    <finalName>PersonCounterAPI</finalName>
     <plugins>
     <plugin>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-maven-plugin</artifactId>
     </plugin>
+    <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>2.6.0</version>
+                <configuration>
+                    <from>
+                        <image>openjdk</image>
+                        <!--          <credHelper></credHelper> -->
+                    </from>
+                    <to>
+                        <image>registry.hub.docker.com/rastadidi/person-counter-api</image>
+                        <!--          <credHelper></credHelper> -->
+                    </to>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>-Xms1024m</jvmFlag>
+                            <jvmFlag>-Xmx1024m</jvmFlag>
+                        </jvmFlags>
+                    </container>
+                </configuration>
+            </plugin>
     </plugins>
   </build>
 </project>
