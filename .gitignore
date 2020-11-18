@@ -38,3 +38,5 @@ target/PersonCounterAPI-1.0-SNAPSHOT.jar
 target/PersonCounterAPI-1.0-SNAPSHOT.jar.original
 input/
 output/
+demo/CAM02
+demo/camera2-simulation.sh
