@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/adriens/person-counter-api.svg?branch=main)](https://travis-ci.org/adriens/person-counter-api)
+
 # API de détection d'objets et de comptage de personnes :man:
 
 API utilisant la librairie de Machine Learning DJL ainsi que TensorFlow afin de détecter les objets
