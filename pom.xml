@@ -179,6 +179,17 @@
       <version>1.24.1</version>
       <type>pom</type>
     </dependency>
+    
+    <dependency>
+          <groupId>org.bytedeco.javacpp-presets</groupId>
+          <artifactId>tensorflow</artifactId>
+          <version>1.12.0-1.4.4</version>
+      </dependency>      <dependency>
+          <groupId>org.bytedeco.javacpp-presets</groupId>
+          <artifactId>tensorflow-platform</artifactId>
+          <version>1.12.0-1.4.4</version>
+      </dependency>
+      
     </dependencies>
 
   <build>
@@ -193,7 +204,7 @@
                 <version>2.6.0</version>
                 <configuration>
                     <from>
-                        <image>openjdk:8</image>
+                        <image>openjdk</image>
                         <!--          <credHelper></credHelper> -->
                     </from>
                     <to>
@@ -202,8 +213,8 @@
                     </to>
                     <container>
                         <jvmFlags>
-                            <jvmFlag>-Xms512m</jvmFlag>
-                            <jvmFlag>-Xmx512m</jvmFlag>
+                            <jvmFlag>-Xms1024m</jvmFlag>
+                            <jvmFlag>-Xmx1024m</jvmFlag>
                         </jvmFlags>
                     </container>
                 </configuration>
