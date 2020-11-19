@@ -56,7 +56,7 @@ public class Setup {
                     .optModelUrls(modelUrl)
                     // saved_model.pb file is in the subfolder of the model archive file
                     .optModelName(modelName)
-                    .optFilter("inception", "resnet50")
+                    .optFilter("inception", "resnet152")
                     .optTranslator(new MyTranslator())
                     .optProgress(new ProgressBar())
                     .build();

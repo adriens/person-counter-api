@@ -36,7 +36,14 @@ build/
 ### JAR ###
 target/PersonCounterAPI-1.0-SNAPSHOT.jar
 target/PersonCounterAPI-1.0-SNAPSHOT.jar.original
+
+### FOLDERS & FILES ###
 input/
 output/
-demo/CAM02
+demo/CAM01/*
+demo/CAM02/*
+demo/CAM03/*
 demo/camera2-simulation.sh
+livecam/.auth
+livecam/.filetrack
+livecam/pictures/*

@@ -18,12 +18,11 @@ parameters = {
 }
 
 
-with open("etc/benchmark.csv", mode="w") as csv_file:
-    img = Image.open(INPUT_PATH)
-
+with open("data/benchmark.csv", mode="w") as csv_file:
     csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     csv_writer.writerow(['filename', 'filesize-bytes', 'resolution', 'confidenceThreshold', 'nbDetectedPersons', 'realNumberOfPerson', 'minConfidence', 'maxConfidence', 'processTimeMs'])
     
+    img = Image.open(INPUT_PATH)
     i = 0
     while i < 100:
         QUALITY = FIXED_QUALITY - i
@@ -50,7 +49,7 @@ with open("etc/benchmark.csv", mode="w") as csv_file:
         resolution = QUALITY
 
         row = [ 
-                OUTPUT, 
+                INPUT, 
                 bytes,
                 resolution,
                 parameters["confidence"],
