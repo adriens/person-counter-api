@@ -12,7 +12,7 @@ from datetime import datetime
 PAUSE = 60 # Time between script execution (SECONDS)
 DAYS_BEFORE_DELETION = 14 # Number of days before old photos are deleted
 PATH_FOR_PICTURES = "pictures/" # Absolute path where the pictures will be stored
-API_URL = "http://127.0.0.1:8080"
+API_URL = "http://127.0.0.1:8080" # URL for API calls
 ALIAS = "RPI" # Alias given to object detected
 CLASS = "person" # Filter for class of objects
 CONFIDENCE = 80 # Minimum confidence needed to be counted as a detected object
