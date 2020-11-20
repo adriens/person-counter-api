@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: UTF-8 -*-
 
 import imaplib
 import base64
@@ -31,6 +32,8 @@ def error(message):
     exit(1)
 
 log("Retrieving credentials..")
+if not os.path.exists('.filetrack'):
+        os.mknod('.filetrack')
 file = open(".auth", "r")
 
 auth = ""
