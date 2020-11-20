@@ -13,7 +13,7 @@ PAUSE = 60 # Time between script execution (SECONDS)
 DAYS_BEFORE_DELETION = 14 # Number of days before old photos are deleted
 PATH_FOR_PICTURES = "pictures/" # Absolute path where the pictures will be stored
 API_URL = "http://127.0.0.1:8080" # URL for API calls
-ALIAS = "RPI" # Alias given to object detected
+ALIAS = "RPI" # Alias given to objects detected
 CLASS = "person" # Filter for class of objects
 CONFIDENCE = 80 # Minimum confidence needed to be counted as a detected object
 HOOK = "hook.py" # Python script to execute in case of detected person
@@ -32,8 +32,8 @@ def error(message):
     exit(1)
 
 log("Retrieving credentials..")
-if not os.path.exists('.filetrack'):
-        os.mknod('.filetrack')
+if not os.path.exists('.auth'):
+        os.mknod('.auth')
 file = open(".auth", "r")
 
 auth = ""
