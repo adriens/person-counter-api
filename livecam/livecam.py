@@ -9,6 +9,7 @@ import time
 import requests
 from datetime import datetime
 
+NUMBER_OF_EMAILS = 10 # Number of emails to retrieve since last execution
 PAUSE = 60 # Time between script execution (SECONDS)
 DAYS_BEFORE_DELETION = 14 # Number of days before old photos are deleted
 PATH_FOR_PICTURES = "pictures/" # Absolute path where the pictures will be stored
@@ -54,20 +55,33 @@ elif(len(auth[0]) == 0):
 elif(len(auth[1]) == 0):
     error("Invalid password")
 file.close()
+
 log("Got credentials, connecting to mail server..")
 mail = imaplib.IMAP4_SSL(auth[2], auth[3])
 mail.login(auth[0], auth[1])
 log("Successfully connected to the server!")
 mail.select("Sent")
 
+mails = []
 while True:
     log("Retrieving last sent mail..")
     type, data = mail.search(None, 'ALL')
     mail_ids = data[0]
     id_list = mail_ids.split()
 
-    for num in data[0].split():
-        typ, data = mail.fetch(num, '(RFC822)' )
+    data_split = data[0].split()
+    if(len(data_split) > NUMBER_OF_EMAILS):
+        data_split = data_split[-NUMBER_OF_EMAILS:]
+
+    count = 0
+    total = len(data_split)
+    for num in data_split:
+        if num in mails:
+            continue
+        else:
+            mails.append(num)
+        typ, data = mail.fetch(num, '(RFC822)')
+        
         raw_email = data[0][1]# converts byte literal to string removing 'b'
         raw_email_string = raw_email.decode('utf-8')
         email_message = email.message_from_string(raw_email_string)
@@ -80,10 +94,15 @@ while True:
             if bool(fileName):
                 filePath = os.path.join(PATH_FOR_PICTURES, fileName)
                 if not os.path.isfile(filePath) :
+                    if not os.path.isdir(PATH_FOR_PICTURES):
+                        os.mkdir(PATH_FOR_PICTURES)
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
                     fp.close()            
                     log('Downloaded "{file}" from email.'.format(file=fileName))
+        count += 1
+        log('Read {count} out of {total} emails'.format(count=count, total=total))
+    
 
     if not os.path.exists('.filetrack'):
         os.mknod('.filetrack')

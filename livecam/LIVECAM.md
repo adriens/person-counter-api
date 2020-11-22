@@ -4,6 +4,11 @@ Ce script est utilisé pour récupérer et analyser les images envoyées par vot
 afin de vérifier si des personnes sont présentes sur la photo et déclencher un autre script personnalisé si c'est le cas.
 
 ### :gear: Setup
+Installez la librairie [requests](https://requests.readthedocs.io/en/master/)
+```
+pip install requests
+```
+
 Pour utiliser le script, créez un fichier nommé `.auth` dans le même répertoire que le script afin le contenu suivant:
 ```
 mail:[Votre adresse e-mail]
