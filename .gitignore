@@ -48,3 +48,4 @@ livecam/.auth
 livecam/.filetrack
 livecam/pictures/*
 livecam/livecam.log
+livecam/livecam.csv

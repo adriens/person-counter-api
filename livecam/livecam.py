@@ -12,7 +12,7 @@ from datetime import datetime
 
 logging.basicConfig(filename='livecam.log', level=logging.DEBUG)
 
-confs = ["NUMBER_OF_EMAILS", "PAUSE", "DAYS_BEFORE_DELETION", "PATH_FOR_PICTURES", "API_URL", "ALIAS", "CLASS", "CONFIDENCE", "HOOK"]
+confs = ["NUMBER_OF_EMAILS", "PAUSE", "DAYS_BEFORE_DELETION", "PATH_FOR_PICTURES", "API_URL", "ALIAS", "CLASS", "CONFIDENCE", "HOOK", "CSV_SCRIPT"]
 infos = ["mail", "password", "server", "port"]
 
 def getCurrentTime():
@@ -42,6 +42,15 @@ conf[0] = int(conf[0]) # NUMBER OF EMAILS
 conf[1] = int(conf[1]) # PAUSE TIME
 conf[2] = int(conf[2]) # DAYS BEFORE DELETION
 
+if(len(conf) != len(confs)):
+    error("Invalid configuration")
+else:
+    for i in range(0, len(conf)):
+        if len(str(conf[i])) == 0:
+            error("Invalid configuration: " + confs[i])
+
+log("Got configuration")
+
 log("Retrieving credentials..")
 if not os.path.exists('.auth'):
         os.mknod('.auth')
@@ -60,10 +69,10 @@ auth = auth.split('\n')
 
 if(len(auth) != len(infos)):
     error("Invalid credentials")
-elif(len(auth[0]) == 0):
-    error("Invalid e-mail")
-elif(len(auth[1]) == 0):
-    error("Invalid password")
+else:
+    for i in range(0, len(auth)):
+        if len(auth[i]) == 0:
+            error("Invalid credentials: " + infos[i])
 file.close()
 
 log("Got credentials, connecting to mail server..")
@@ -132,6 +141,7 @@ while True:
                 picture.close()
                 count = len(request.json())
                 log("Number of persons detected: " + str(count))
+                os.system("./" + conf[9] + " " + conf[3] + " " + filename + " " + str(count))
                 if(count > 0):
                     os.system("./" + conf[8] + " " + conf[3]+filename + " " + str(count))
                 filetrack.write(filename+'\n')
