@@ -12,16 +12,7 @@ from datetime import datetime
 
 logging.basicConfig(filename='livecam.log', level=logging.DEBUG)
 
-NUMBER_OF_EMAILS = 10 # Number of emails to retrieve since last initial execution
-PAUSE = 60 # Time between script execution (SECONDS)
-DAYS_BEFORE_DELETION = 14 # Number of days before old photos are deleted
-PATH_FOR_PICTURES = "pictures/" # Absolute path where the pictures will be stored
-API_URL = "http://127.0.0.1:8080" # URL for API calls
-ALIAS = "RPI" # Alias given to objects detected
-CLASS = "person" # Filter for class of objects
-CONFIDENCE = 80 # Minimum confidence needed to be counted as a detected object
-HOOK = "hook.py" # Python script to execute in case of detected person
-
+confs = ["NUMBER_OF_EMAILS", "PAUSE", "DAYS_BEFORE_DELETION", "PATH_FOR_PICTURES", "API_URL", "ALIAS", "CLASS", "CONFIDENCE", "HOOK"]
 infos = ["mail", "password", "server", "port"]
 
 def getCurrentTime():
@@ -34,6 +25,22 @@ def log(message):
 def error(message):
     logging.error(" [" + getCurrentTime() + "] " + message)
     exit(1)
+
+log("Retrieving configuration..")
+if not os.path.exists('livecam.conf'):
+        os.mknod('livecam.conf')
+file = open("livecam.conf", "r")   
+
+conf = ""
+for lines in file.readlines():
+    conf += lines
+for item in confs:
+    conf = conf.replace(item+":", "")
+conf = conf.split('\n')
+
+conf[0] = int(conf[0]) # NUMBER OF EMAILS
+conf[1] = int(conf[1]) # PAUSE TIME
+conf[2] = int(conf[2]) # DAYS BEFORE DELETION
 
 log("Retrieving credentials..")
 if not os.path.exists('.auth'):
@@ -73,8 +80,8 @@ while True:
     id_list = mail_ids.split()
 
     data_split = data[0].split()
-    if(len(data_split) > NUMBER_OF_EMAILS):
-        data_split = data_split[-NUMBER_OF_EMAILS:]
+    if(len(data_split) > int(conf[0])):
+        data_split = data_split[-int(conf[0]):]
 
     count = 0
     total = len(data_split)
@@ -95,10 +102,10 @@ while True:
                 continue
             fileName = part.get_filename()        
             if bool(fileName):
-                filePath = os.path.join(PATH_FOR_PICTURES, fileName)
+                filePath = os.path.join(conf[3], fileName)
                 if not os.path.isfile(filePath) :
-                    if not os.path.isdir(PATH_FOR_PICTURES):
-                        os.mkdir(PATH_FOR_PICTURES)
+                    if not os.path.isdir(conf[3]):
+                        os.mkdir(conf[3])
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
                     fp.close()            
@@ -112,22 +119,23 @@ while True:
     filetrack = open('.filetrack', 'r+')
     files_done = filetrack.readlines()
     files_done = list(map(lambda s: s.strip(), files_done))
-    for filename in os.listdir(PATH_FOR_PICTURES):
+    for filename in os.listdir(conf[3]):
         if filename.endswith(".jpg") or filename.endswith(".png"):
-            if(time.time() - os.path.getmtime(PATH_FOR_PICTURES + filename) > DAYS_BEFORE_DELETION * 24 * 3600):
-                os.remove(PATH_FOR_PICTURES + filename)
+            if(time.time() - os.path.getmtime(conf[3] + filename) > conf[2] * 24 * 3600):
+                os.remove(conf[3] + filename)
                 log('Deleted old picture ' + filename)
             elif(filename not in files_done):
                 log('Running analysis on picture ' + filename + '...')
-                picture = open(PATH_FOR_PICTURES + filename, 'rb')
-                request = requests.post(API_URL+'/photos/raw?class='+CLASS+'&confidence='+str(CONFIDENCE)+'&alias='+ALIAS, 
+                picture = open(conf[3] + filename, 'rb')
+                request = requests.post(conf[4]+'/photos/raw?class='+conf[6]+'&confidence='+conf[7]+'&alias='+conf[5], 
                                         data=picture.read())
                 picture.close()
                 count = len(request.json())
                 log("Number of persons detected: " + str(count))
                 if(count > 0):
-                    os.system("./" + HOOK + " " + PATH_FOR_PICTURES+filename + " " + str(count))
+                    os.system("./" + conf[8] + " " + conf[3]+filename + " " + str(count))
                 filetrack.write(filename+'\n')
                 files_done.append(filename)
+    log('Finished analysing new pictures.')
     filetrack.close()
-    time.sleep(PAUSE)
+    time.sleep(conf[1])
