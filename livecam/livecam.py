@@ -7,9 +7,12 @@ import os
 import email
 import time
 import requests
+import logging
 from datetime import datetime
 
-NUMBER_OF_EMAILS = 10 # Number of emails to retrieve since last execution
+logging.basicConfig(filename='livecam.log', level=logging.DEBUG)
+
+NUMBER_OF_EMAILS = 10 # Number of emails to retrieve since last initial execution
 PAUSE = 60 # Time between script execution (SECONDS)
 DAYS_BEFORE_DELETION = 14 # Number of days before old photos are deleted
 PATH_FOR_PICTURES = "pictures/" # Absolute path where the pictures will be stored
@@ -23,13 +26,13 @@ infos = ["mail", "password", "server", "port"]
 
 def getCurrentTime():
     now = datetime.now()
-    return now.strftime("%H:%M:%S")
+    return now.strftime("%d/%m/%Y %H:%M:%S")
 
 def log(message):
-    print("["+getCurrentTime()+'] INFO: ' + message)
+    logging.info(" [" + getCurrentTime() + "] " + message)
 
 def error(message):
-    print("["+getCurrentTime()+'] ERROR: ' + message)
+    logging.error(" [" + getCurrentTime() + "] " + message)
     exit(1)
 
 log("Retrieving credentials..")

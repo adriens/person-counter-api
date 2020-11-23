@@ -47,3 +47,4 @@ demo/camera2-simulation.sh
 livecam/.auth
 livecam/.filetrack
 livecam/pictures/*
+livecam/livecam.log
