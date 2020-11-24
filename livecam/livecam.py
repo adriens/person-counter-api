@@ -75,14 +75,14 @@ else:
             error("Invalid credentials: " + infos[i])
 file.close()
 
-log("Got credentials, connecting to mail server..")
-mail = imaplib.IMAP4_SSL(auth[2], auth[3])
-mail.login(auth[0], auth[1])
-log("Successfully connected to the server!")
-mail.select("Sent")
-
 mails = []
 while True:
+    mail = imaplib.IMAP4_SSL(auth[2], auth[3])
+    log("Got credentials, connecting to mail server..")
+    mail.login(auth[0], auth[1])
+    log("Successfully connected to the server!")
+    mail.select("Sent")
+
     log("Retrieving last sent mail..")
     type, data = mail.search(None, 'ALL')
     mail_ids = data[0]
@@ -148,4 +148,6 @@ while True:
                 files_done.append(filename)
     log('Finished analysing new pictures.')
     filetrack.close()
+    mail.logout();
+    log('Disconnected from mail server, reconnecting in ' + str(conf[1]) + ' seconds.')
     time.sleep(conf[1])
