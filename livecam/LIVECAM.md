@@ -1,4 +1,4 @@
-# :snake: Python3 Script LiveCAM
+# :snake: Python Script LiveCAM
 
 Ce script est utilisé pour récupérer et analyser les images envoyées par votre / vos caméra(s) de surveillance (par exemple)
 afin de vérifier si des personnes sont présentes sur la photo et déclencher un autre script personnalisé si c'est le cas.
