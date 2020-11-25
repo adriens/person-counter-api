@@ -9,7 +9,7 @@ Installez la librairie [requests](https://requests.readthedocs.io/en/master/)
 pip install requests
 ```
 
-Pour utiliser le script, créez un fichier nommé `.auth` dans le même répertoire que le script afin le contenu suivant:
+Pour utiliser le script, créez un fichier nommé `.auth` dans le même répertoire que le script avec le contenu suivant:
 ```
 mail:[Votre adresse e-mail]
 password:[Votre mot de passe]
@@ -24,6 +24,7 @@ Outlook: `outlook.office365.com` / 993<br>
 Yahoo: `imap.mail.yahoo.com` / 993<br>
 
 **Paramètres du script:**<br>
+Dans le fichier `livecam.conf`:
 ```
 PAUSE = 60                          # Time between script execution (SECONDS)
 DAYS_BEFORE_DELETION = 14           # Number of days before old photos are deleted
