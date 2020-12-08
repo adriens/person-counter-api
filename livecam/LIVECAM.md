@@ -26,14 +26,14 @@ Yahoo: `imap.mail.yahoo.com` / 993<br>
 **Paramètres du script:**<br>
 Dans le fichier `livecam.conf`:
 ```
-PAUSE = 60                          # Time between script execution (SECONDS)
-DAYS_BEFORE_DELETION = 14           # Number of days before old photos are deleted
-PATH_FOR_PICTURES = "pictures/"     # Absolute path where the pictures will be stored
-API_URL = "http://127.0.0.1:8080"   # URL for API calls
-ALIAS = "RPI"                       # Alias given to objects detected
-CLASS = "person"                    # Filter for class of objects
-CONFIDENCE = 80                     # Minimum confidence needed to be counted as a detected object
-HOOK = "hook.py"                    # Python script to execute in case of detected person
+PAUSE = 60                          # Temps entre chaque exécution en secondes
+DAYS_BEFORE_DELETION = 14           # Nombre de jour avant suppression d'une vieille photo
+PATH_FOR_PICTURES = "pictures/"     # Chemin où les photos seront stockés
+API_URL = "http://127.0.0.1:8080"   # URL de l'API
+ALIAS = "RPI"                       # Alias donné aux objets détectés
+CLASS = "person"                    # Classe d'objet à détecter
+CONFIDENCE = 80                     # Taux de confiance minimum pour valider l'objet détecté
+HOOK = "hook.py"                    # Script python à exécuter en cas de personne détectée
 ```
 
 ### :rocket: Lancer le script
